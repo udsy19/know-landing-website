@@ -60,23 +60,39 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 0.6 }}
+        viewport={{ once: true, margin: "0px" }}
+        transition={{ duration: 0.5 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
         <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">A real session, over time</h2>
         <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20">
           <div>
             <p className="text-muted-foreground select-none mb-1">$ know</p>
-            <p>know: I'm running locally.</p>
+            <p>know: running locally.</p>
           </div>
           
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ 3 days pass ]
+            [ day 1 ]
           </div>
 
           <div>
-            <p>know: You've been starting this late all week.</p>
+            <p>know: work began at 11:43pm.</p>
+          </div>
+
+          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
+            [ day 2 ]
+          </div>
+
+          <div>
+            <p>know: same start time.</p>
+          </div>
+
+          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
+            [ day 4 ]
+          </div>
+
+          <div>
+            <p>know: this is becoming a pattern.</p>
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
@@ -84,18 +100,43 @@ export default function Landing() {
           </div>
           
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ 2 days pass ]
+            [ day 6 ]
           </div>
 
           <div>
-            <p>know: Do you want help catching this earlier?</p>
+            <p>know: you work late before important deadlines.</p>
+            <p>know: outcomes are still good.</p>
+            <p>know: effort cost is rising.</p>
+          </div>
+
+          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
+            [ day 9 ]
           </div>
 
           <div>
-            <p className="text-muted-foreground select-none mb-1">$ yes</p>
-            <p>know: Okay.<BlinkingCursor /></p>
+            <p>know: next Friday matters.</p>
+            <p>know: if nothing changes, you will start late again.</p>
+          </div>
+
+          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
+            [ day 9 — earlier that evening ]
+          </div>
+
+          <div>
+            <p>know: reminding you now.</p>
+          </div>
+
+          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
+            [ you start earlier ]
+          </div>
+
+          <div>
+            <p>know: noted.<BlinkingCursor /></p>
           </div>
         </div>
+        <p className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl">
+          This is not a chatbot. It is a system that keeps paying attention when you don't.
+        </p>
       </motion.section>
 
       {/* State of the System */}
