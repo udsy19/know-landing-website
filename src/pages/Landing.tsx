@@ -60,7 +60,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px" }}
+        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
         transition={{ duration: 0.5 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -72,7 +72,7 @@ export default function Landing() {
           </div>
           
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ day 1 ]
+            [ DAY 1 ]
           </div>
 
           <div>
@@ -80,7 +80,7 @@ export default function Landing() {
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ day 2 ]
+            [ DAY 2 ]
           </div>
 
           <div>
@@ -88,7 +88,7 @@ export default function Landing() {
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ day 4 ]
+            [ DAY 4 ]
           </div>
 
           <div>
@@ -96,11 +96,11 @@ export default function Landing() {
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ no response ]
+            [ NO RESPONSE ]
           </div>
           
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ day 6 ]
+            [ DAY 6 ]
           </div>
 
           <div>
@@ -110,7 +110,7 @@ export default function Landing() {
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ day 9 ]
+            [ DAY 9 ]
           </div>
 
           <div>
@@ -119,7 +119,7 @@ export default function Landing() {
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ day 9 — earlier that evening ]
+            [ DAY 9 — EARLIER THAT EVENING ]
           </div>
 
           <div>
@@ -127,7 +127,7 @@ export default function Landing() {
           </div>
 
           <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ you start earlier ]
+            [ YOU START EARLIER ]
           </div>
 
           <div>
