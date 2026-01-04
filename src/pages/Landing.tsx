@@ -25,7 +25,7 @@ export default function Landing() {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
       
       {/* Hero Section - Progressive Disclosure */}
-      <section className="container mx-auto px-6 pt-32 pb-24 max-w-3xl min-h-[50vh] flex flex-col justify-center">
+      <section className="container mx-auto px-6 pt-32 pb-12 max-w-3xl min-h-[40vh] flex flex-col justify-center">
         <motion.h1 
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ export default function Landing() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px 200px 0px" }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
+        className="container mx-auto px-6 pt-12 pb-24 max-w-3xl border-t border-border/40"
       >
         <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">A real session, over time</h2>
         <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20">
@@ -143,7 +143,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
+        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -172,7 +172,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
+        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -213,7 +213,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
+        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -228,7 +228,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
+        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-32 max-w-3xl border-t border-border/40 mb-12"
       >
