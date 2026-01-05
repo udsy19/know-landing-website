@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 
 const BlinkingCursor = () => (
   <motion.span
@@ -20,7 +21,67 @@ const StatusDot = ({ status }: { status: string }) => (
   </div>
 );
 
+const Typewriter = ({ text, onComplete, speed = 15 }: { text: string, onComplete?: () => void, speed?: number }) => {
+  const [displayText, setDisplayText] = useState("");
+  
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayText((prev) => prev + text.charAt(i));
+        i++;
+      } else {
+        clearInterval(timer);
+        if (onComplete) onComplete();
+      }
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed, onComplete]);
+
+  return <span>{displayText}</span>;
+};
+
+const transcriptLines = [
+  { text: "$ know", type: "command" },
+  { text: "know: running locally.", type: "output" },
+  { text: "[ DAY 1 ]", type: "marker" },
+  { text: "know: work began at 11:43pm.", type: "output" },
+  { text: "[ DAY 2 ]", type: "marker" },
+  { text: "know: same start time.", type: "output" },
+  { text: "[ DAY 4 ]", type: "marker" },
+  { text: "know: this is becoming a pattern.", type: "output" },
+  { text: "[ NO RESPONSE ]", type: "marker" },
+  { text: "[ DAY 6 ]", type: "marker" },
+  { text: "know: you work late before important deadlines.", type: "output" },
+  { text: "know: outcomes are still good.", type: "output" },
+  { text: "know: effort cost is rising.", type: "output" },
+  { text: "[ DAY 9 ]", type: "marker" },
+  { text: "know: next Friday matters.", type: "output" },
+  { text: "know: if nothing changes, you will start late again.", type: "output" },
+  { text: "[ DAY 9 — EARLIER THAT EVENING ]", type: "marker" },
+  { text: "know: reminding you now.", type: "output" },
+  { text: "[ YOU START EARLIER ]", type: "marker" },
+  { text: "know: noted.", type: "output", hasCursor: true },
+];
+
 export default function Landing() {
+  const transcriptRef = useRef(null);
+  const isInView = useInView(transcriptRef, { once: true, margin: "0px 0px -200px 0px" });
+  const [activeLineIndex, setActiveLineIndex] = useState(-1);
+
+  useEffect(() => {
+    if (isInView && activeLineIndex === -1) {
+      setActiveLineIndex(0);
+    }
+  }, [isInView, activeLineIndex]);
+
+  const handleLineComplete = () => {
+    if (activeLineIndex < transcriptLines.length - 1) {
+      setActiveLineIndex((prev) => prev + 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
       
@@ -58,92 +119,54 @@ export default function Landing() {
 
       {/* Live Terminal Transcript */}
       <motion.section
+        ref={transcriptRef}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.5 }}
         className="container mx-auto px-6 pt-12 pb-24 max-w-3xl border-t border-border/40"
       >
         <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">A real session, over time</h2>
-        <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20">
-          <div>
-            <p className="text-muted-foreground select-none mb-1">$ know</p>
-            <p>know: running locally.</p>
-          </div>
-          
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ DAY 1 ]
-          </div>
-
-          <div>
-            <p>know: work began at 11:43pm.</p>
-          </div>
-
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ DAY 2 ]
-          </div>
-
-          <div>
-            <p>know: same start time.</p>
-          </div>
-
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ DAY 4 ]
-          </div>
-
-          <div>
-            <p>know: this is becoming a pattern.</p>
-          </div>
-
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ NO RESPONSE ]
-          </div>
-          
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ DAY 6 ]
-          </div>
-
-          <div>
-            <p>know: you work late before important deadlines.</p>
-            <p>know: outcomes are still good.</p>
-            <p>know: effort cost is rising.</p>
-          </div>
-
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ DAY 9 ]
-          </div>
-
-          <div>
-            <p>know: next Friday matters.</p>
-            <p>know: if nothing changes, you will start late again.</p>
-          </div>
-
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ DAY 9 — EARLIER THAT EVENING ]
-          </div>
-
-          <div>
-            <p>know: reminding you now.</p>
-          </div>
-
-          <div className="text-muted-foreground/40 py-2 text-xs uppercase tracking-widest">
-            [ YOU START EARLIER ]
-          </div>
-
-          <div>
-            <p>know: noted.<BlinkingCursor /></p>
-          </div>
+        <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20 min-h-[400px]">
+          {transcriptLines.map((line, index) => {
+            if (index > activeLineIndex) return null;
+            
+            const isLast = index === transcriptLines.length - 1;
+            const isTyping = index === activeLineIndex;
+            
+            return (
+              <div key={index} className={line.type === "marker" ? "text-muted-foreground/40 py-2 text-xs uppercase tracking-widest" : ""}>
+                {line.type === "command" && <span className="text-muted-foreground select-none mr-2">$</span>}
+                {isTyping ? (
+                  <Typewriter 
+                    text={line.text} 
+                    onComplete={handleLineComplete} 
+                    speed={15} 
+                  />
+                ) : (
+                  <span>{line.text}</span>
+                )}
+                {line.hasCursor && isLast && !isTyping && <BlinkingCursor />}
+                {isTyping && <BlinkingCursor />}
+              </div>
+            );
+          })}
         </div>
-        <p className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl">
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl"
+        >
           This is not a chatbot. It is a system that keeps paying attention when you don't.
-        </p>
+        </motion.p>
       </motion.section>
 
       {/* State of the System */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -172,7 +195,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -213,7 +236,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
@@ -228,7 +251,7 @@ export default function Landing() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px 200px 0px" }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-32 max-w-3xl border-t border-border/40 mb-12"
       >
