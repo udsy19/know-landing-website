@@ -67,13 +67,13 @@ const transcriptLines = [
 
 export default function Landing() {
   const [activeLineIndex, setActiveLineIndex] = useState(0);
-  const [transcriptComplete, setTranscriptComplete] = useState(false);
+  const [showFinalSentence, setShowFinalSentence] = useState(false);
 
   const handleLineComplete = () => {
     if (activeLineIndex < transcriptLines.length - 1) {
       setActiveLineIndex((prev) => prev + 1);
     } else {
-      setTranscriptComplete(true);
+      setShowFinalSentence(true);
     }
   };
 
@@ -146,16 +146,16 @@ export default function Landing() {
             );
           })}
         </div>
-        {transcriptComplete && (
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl"
-          >
-            <Typewriter text="This is not a chatbot. It is a system that keeps paying attention when you don't." speed={30} />
-          </motion.p>
-        )}
+        <motion.p 
+          className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl min-h-[3rem]"
+        >
+          {showFinalSentence && (
+             <Typewriter 
+               text="This is not a chatbot. It is a system that keeps paying attention when you don't."
+               speed={30}
+             />
+          )}
+        </motion.p>
       </motion.section>
 
       {/* State of the System */}
