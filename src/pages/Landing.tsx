@@ -2,37 +2,6 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const BlinkingCursor = () => (
->>>>>>> REPLACE
-<<<<<<< SEARCH
-export default function Landing() {
-  const transcriptRef = useRef(null);
-  const isInView = useInView(transcriptRef, { once: true, margin: "0px 0px -200px 0px" });
-  const [activeLineIndex, setActiveLineIndex] = useState(-1);
-
-  useEffect(() => {
-    if (isInView && activeLineIndex === -1) {
-      setActiveLineIndex(0);
-    }
-  }, [isInView, activeLineIndex]);
-
-  const handleLineComplete = () => {
-=======
-export default function Landing() {
-  const [activeLineIndex, setActiveLineIndex] = useState(0);
-
-  const handleLineComplete = () => {
->>>>>>> REPLACE
-<<<<<<< SEARCH
-      {/* Live Terminal Transcript */}
-      <motion.section
-        ref={transcriptRef}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-=======
-      {/* Live Terminal Transcript */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
   <motion.span
     animate={{ opacity: [0, 1, 0] }}
     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -97,19 +66,14 @@ const transcriptLines = [
 ];
 
 export default function Landing() {
-  const transcriptRef = useRef(null);
-  const isInView = useInView(transcriptRef, { once: true, margin: "0px 0px -200px 0px" });
-  const [activeLineIndex, setActiveLineIndex] = useState(-1);
-
-  useEffect(() => {
-    if (isInView && activeLineIndex === -1) {
-      setActiveLineIndex(0);
-    }
-  }, [isInView, activeLineIndex]);
+  const [activeLineIndex, setActiveLineIndex] = useState(0);
+  const [transcriptComplete, setTranscriptComplete] = useState(false);
 
   const handleLineComplete = () => {
     if (activeLineIndex < transcriptLines.length - 1) {
       setActiveLineIndex((prev) => prev + 1);
+    } else {
+      setTranscriptComplete(true);
     }
   };
 
@@ -150,7 +114,6 @@ export default function Landing() {
 
       {/* Live Terminal Transcript */}
       <motion.section
-        ref={transcriptRef}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -200px 0px" }}
@@ -183,14 +146,16 @@ export default function Landing() {
             );
           })}
         </div>
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl"
-        >
-          This is not a chatbot. It is a system that keeps paying attention when you don't.
-        </motion.p>
+        {transcriptComplete && (
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl"
+          >
+            <Typewriter text="This is not a chatbot. It is a system that keeps paying attention when you don't." speed={30} />
+          </motion.p>
+        )}
       </motion.section>
 
       {/* State of the System */}
