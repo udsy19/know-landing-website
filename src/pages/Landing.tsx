@@ -25,15 +25,20 @@ const Typewriter = ({ text, onComplete, speed = 15 }: { text: string, onComplete
   const [displayText, setDisplayText] = useState("");
   
   useEffect(() => {
+    setDisplayText("");
+    if (!text) {
+      if (onComplete) onComplete();
+      return;
+    }
+
     let i = 0;
     const timer = setInterval(() => {
-      if (i < text.length) {
-        setDisplayText((prev) => prev + text.charAt(i));
-        i++;
-      } else {
+      setDisplayText(text.substring(0, i + 1));
+      if (i + 1 >= text.length) {
         clearInterval(timer);
         if (onComplete) onComplete();
       }
+      i += 1;
     }, speed);
 
     return () => clearInterval(timer);
@@ -78,7 +83,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
+    <div className="crt min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
       
       {/* Hero Section - Progressive Disclosure */}
       <section className="container mx-auto px-6 pt-32 pb-12 max-w-3xl min-h-[40vh] flex flex-col justify-center">
@@ -86,7 +91,7 @@ export default function Landing() {
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-4xl md:text-6xl font-light leading-[1.1] mb-8 tracking-tighter"
+          className="text-4xl md:text-6xl font-light leading-[1.1] mb-8 tracking-tighter text-glow"
         >
           Most things don't fail dramatically.<br />They fade.
         </motion.h1>
