@@ -1,7 +1,38 @@
-import { motion, useInView } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const BlinkingCursor = () => (
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+export default function Landing() {
+  const transcriptRef = useRef(null);
+  const isInView = useInView(transcriptRef, { once: true, margin: "0px 0px -200px 0px" });
+  const [activeLineIndex, setActiveLineIndex] = useState(-1);
+
+  useEffect(() => {
+    if (isInView && activeLineIndex === -1) {
+      setActiveLineIndex(0);
+    }
+  }, [isInView, activeLineIndex]);
+
+  const handleLineComplete = () => {
+=======
+export default function Landing() {
+  const [activeLineIndex, setActiveLineIndex] = useState(0);
+
+  const handleLineComplete = () => {
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+      {/* Live Terminal Transcript */}
+      <motion.section
+        ref={transcriptRef}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+=======
+      {/* Live Terminal Transcript */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
   <motion.span
     animate={{ opacity: [0, 1, 0] }}
     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
