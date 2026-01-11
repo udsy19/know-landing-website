@@ -63,18 +63,36 @@ export default function Landing() {
         </div>
 
         {/* Technical Network Graph with Axes */}
-        <div className="relative bg-background border border-border/40 rounded-lg p-8 mb-8">
-          {/* Grid background */}
-          <div className="absolute inset-8 opacity-20">
+        <div className="relative bg-gradient-to-br from-background via-background to-primary/5 border border-border/40 rounded-lg p-8 mb-8 overflow-hidden">
+          {/* Animated grid background */}
+          <div className="absolute inset-8 opacity-10">
             <svg className="w-full h-full">
               <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-border"/>
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary"/>
                 </pattern>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.2" />
+                  <stop offset="50%" stopColor="currentColor" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.2" />
+                </linearGradient>
               </defs>
               <rect width="100%" height="100%" fill="url(#grid)" />
             </svg>
           </div>
+
+          {/* Ambient glow effect */}
+          <motion.div
+            animate={{
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none"
+          />
 
           <div className="relative h-[600px]">
             {/* Y-axis label */}
@@ -116,14 +134,47 @@ export default function Landing() {
               initial={{ scale: 0, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3, type: "spring" }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
               className="absolute z-20"
               style={{ left: '15%', top: '20%' }}
             >
               <div className="relative">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/60 border-2 border-background flex items-center justify-center shadow-lg">
-                  <span className="text-xs font-bold text-primary-foreground">YOU</span>
-                </div>
+                {/* Pulsing ring effect */}
+                <motion.div
+                  animate={{
+                    scale: [1, 1.4, 1],
+                    opacity: [0.5, 0, 0.5],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeOut"
+                  }}
+                  className="absolute inset-0 rounded-full border-2 border-primary"
+                />
+                <motion.div
+                  animate={{
+                    rotate: 360,
+                  }}
+                  transition={{
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-primary/80 to-primary/60 border-2 border-background flex items-center justify-center shadow-lg shadow-primary/50"
+                >
+                  <motion.span
+                    animate={{ rotate: -360 }}
+                    transition={{
+                      duration: 20,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }}
+                    className="text-xs font-bold text-primary-foreground"
+                  >
+                    YOU
+                  </motion.span>
+                </motion.div>
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono text-muted-foreground whitespace-nowrap">
                   node_0
                 </div>
@@ -137,21 +188,38 @@ export default function Landing() {
               { name: 'Emma', y: 65, highlight: false, strength: 0.64 },
             ].map((person, i) => (
               <motion.div key={i}>
-                {/* Connection line */}
+                {/* Connection line with animated gradient */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+                  <defs>
+                    <linearGradient id={`lineGrad-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                      <motion.stop
+                        offset="0%"
+                        stopColor="currentColor"
+                        stopOpacity={person.highlight ? "0.8" : "0.3"}
+                        animate={person.highlight ? { stopOpacity: [0.8, 0.4, 0.8] } : {}}
+                        transition={person.highlight ? { duration: 2, repeat: Infinity } : {}}
+                      />
+                      <motion.stop
+                        offset="100%"
+                        stopColor="currentColor"
+                        stopOpacity={person.highlight ? "0.2" : "0.1"}
+                      />
+                    </linearGradient>
+                  </defs>
                   <motion.line
                     initial={{ pathLength: 0, opacity: 0 }}
-                    whileInView={{ pathLength: 1, opacity: 0.6 }}
+                    whileInView={{ pathLength: 1, opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.4 + i * 0.1, duration: 0.6 }}
+                    transition={{ delay: 0.4 + i * 0.1, duration: 0.8, ease: "easeOut" }}
                     x1="15%"
                     y1="20%"
                     x2="38%"
                     y2={`${person.y}%`}
-                    stroke="currentColor"
-                    strokeWidth={person.highlight ? "2" : "1"}
+                    stroke={`url(#lineGrad-${i})`}
+                    strokeWidth={person.highlight ? "3" : "1.5"}
                     strokeDasharray={person.highlight ? "0" : "4 4"}
-                    className={person.highlight ? 'text-primary/60' : 'text-border/50'}
+                    className={person.highlight ? 'text-primary' : 'text-border'}
+                    filter={person.highlight ? "drop-shadow(0 0 4px currentColor)" : "none"}
                   />
                 </svg>
 
@@ -160,23 +228,44 @@ export default function Landing() {
                   initial={{ scale: 0, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.5 + i * 0.1, type: "spring" }}
+                  transition={{ delay: 0.5 + i * 0.1, type: "spring", stiffness: 200 }}
+                  whileHover={{ scale: 1.1 }}
                   className="absolute z-10"
                   style={{ left: '38%', top: `${person.y}%` }}
                 >
                   <div className="relative">
+                    {person.highlight && (
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.3, 1],
+                          opacity: [0.3, 0, 0.3],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeOut",
+                          delay: i * 0.3
+                        }}
+                        className="absolute inset-0 rounded-full bg-primary"
+                      />
+                    )}
                     <div className={`w-12 h-12 rounded-full ${
                       person.highlight
-                        ? 'bg-primary/30 border-2 border-primary'
-                        : 'bg-muted border border-border'
-                    } flex items-center justify-center shadow-md`}>
-                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+                        ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary shadow-lg shadow-primary/30'
+                        : 'bg-muted border border-border shadow-md'
+                    } flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer`}>
+                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                         {person.name}
                       </span>
                     </div>
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.7 + i * 0.1 }}
+                      className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap"
+                    >
                       σ={person.strength}
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -187,22 +276,39 @@ export default function Landing() {
               { name: 'Marcus', y: 35, highlight: false, strength: 0.71, from: 25 },
               { name: 'Julia', y: 20, highlight: true, strength: 0.88, from: 25 },
             ].map((person, i) => (
-              <motion.div key={i}>
-                {/* Connection line */}
+              <motion.div key={`deg2-${i}`}>
+                {/* Connection line with gradient */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+                  <defs>
+                    <linearGradient id={`lineGrad2-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                      <motion.stop
+                        offset="0%"
+                        stopColor="currentColor"
+                        stopOpacity={person.highlight ? "0.7" : "0.25"}
+                        animate={person.highlight ? { stopOpacity: [0.7, 0.3, 0.7] } : {}}
+                        transition={person.highlight ? { duration: 2.5, repeat: Infinity, delay: 0.5 } : {}}
+                      />
+                      <motion.stop
+                        offset="100%"
+                        stopColor="currentColor"
+                        stopOpacity={person.highlight ? "0.2" : "0.1"}
+                      />
+                    </linearGradient>
+                  </defs>
                   <motion.line
                     initial={{ pathLength: 0, opacity: 0 }}
-                    whileInView={{ pathLength: 1, opacity: 0.6 }}
+                    whileInView={{ pathLength: 1, opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.8 + i * 0.1, duration: 0.6 }}
+                    transition={{ delay: 0.8 + i * 0.1, duration: 0.8, ease: "easeOut" }}
                     x1="38%"
                     y1={`${person.from}%`}
                     x2="61%"
                     y2={`${person.y}%`}
-                    stroke="currentColor"
-                    strokeWidth={person.highlight ? "2" : "1"}
+                    stroke={`url(#lineGrad2-${i})`}
+                    strokeWidth={person.highlight ? "3" : "1.5"}
                     strokeDasharray={person.highlight ? "0" : "4 4"}
-                    className={person.highlight ? 'text-primary/60' : 'text-border/50'}
+                    className={person.highlight ? 'text-primary' : 'text-border'}
+                    filter={person.highlight ? "drop-shadow(0 0 3px currentColor)" : "none"}
                   />
                 </svg>
 
@@ -211,23 +317,44 @@ export default function Landing() {
                   initial={{ scale: 0, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.9 + i * 0.1, type: "spring" }}
+                  transition={{ delay: 0.9 + i * 0.1, type: "spring", stiffness: 200 }}
+                  whileHover={{ scale: 1.1 }}
                   className="absolute z-10"
                   style={{ left: '61%', top: `${person.y}%` }}
                 >
                   <div className="relative">
+                    {person.highlight && (
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.3, 1],
+                          opacity: [0.25, 0, 0.25],
+                        }}
+                        transition={{
+                          duration: 2.5,
+                          repeat: Infinity,
+                          ease: "easeOut",
+                          delay: 0.5
+                        }}
+                        className="absolute inset-0 rounded-full bg-primary"
+                      />
+                    )}
                     <div className={`w-12 h-12 rounded-full ${
                       person.highlight
-                        ? 'bg-primary/20 border-2 border-primary/70'
-                        : 'bg-muted border border-border/60'
-                    } flex items-center justify-center shadow-md`}>
-                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+                        ? 'bg-gradient-to-br from-primary/30 to-primary/15 border-2 border-primary/70 shadow-lg shadow-primary/20'
+                        : 'bg-muted border border-border/60 shadow-md'
+                    } flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer`}>
+                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                         {person.name}
                       </span>
                     </div>
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1.1 + i * 0.1 }}
+                      className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap"
+                    >
                       σ={person.strength}
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -235,20 +362,37 @@ export default function Landing() {
 
             {/* 3° Degree Node - Target */}
             <motion.div>
-              {/* Connection line */}
+              {/* Connection line with gradient */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+                <defs>
+                  <linearGradient id="lineGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <motion.stop
+                      offset="0%"
+                      stopColor="currentColor"
+                      stopOpacity="0.7"
+                      animate={{ stopOpacity: [0.7, 0.3, 0.7] }}
+                      transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                    />
+                    <motion.stop
+                      offset="100%"
+                      stopColor="currentColor"
+                      stopOpacity="0.3"
+                    />
+                  </linearGradient>
+                </defs>
                 <motion.line
                   initial={{ pathLength: 0, opacity: 0 }}
-                  whileInView={{ pathLength: 1, opacity: 0.6 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 1.2, duration: 0.6 }}
+                  transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
                   x1="61%"
                   y1="20%"
                   x2="84%"
                   y2="25%"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="text-primary/60"
+                  stroke="url(#lineGrad3)"
+                  strokeWidth="3"
+                  className="text-primary"
+                  filter="drop-shadow(0 0 6px currentColor)"
                 />
               </svg>
 
@@ -257,31 +401,96 @@ export default function Landing() {
                 initial={{ scale: 0, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 1.3, type: "spring" }}
+                transition={{ delay: 1.3, type: "spring", stiffness: 150 }}
+                whileHover={{ scale: 1.15 }}
                 className="absolute z-10"
                 style={{ left: '84%', top: '25%' }}
               >
                 <div className="relative">
-                  <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/50 flex items-center justify-center shadow-lg">
+                  {/* Multiple pulsing rings */}
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.4, 0, 0.4],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeOut",
+                      delay: 0
+                    }}
+                    className="absolute inset-0 rounded-full bg-primary"
+                  />
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.4, 0, 0.4],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeOut",
+                      delay: 0.5
+                    }}
+                    className="absolute inset-0 rounded-full bg-primary"
+                  />
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 border-3 border-primary shadow-xl shadow-primary/40 flex items-center justify-center backdrop-blur-sm cursor-pointer transition-all">
                     <span className="text-xs font-bold text-primary">TARGET</span>
                   </div>
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.5 }}
+                    className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap"
+                  >
                     σ=0.81
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             </motion.div>
 
-            {/* Path highlight overlay */}
+            {/* Path highlight overlay with animation */}
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, scale: 0.9, y: -10 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 1.5 }}
-              className="absolute top-4 right-4 bg-primary/10 border border-primary/30 rounded px-3 py-2 text-xs font-mono"
+              transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
+              className="absolute top-4 right-4 bg-gradient-to-br from-primary/15 via-primary/10 to-background border-2 border-primary/40 rounded-lg px-4 py-3 text-xs font-mono shadow-lg shadow-primary/20 backdrop-blur-sm"
             >
-              <div className="text-primary font-semibold mb-1">[optimal path found]</div>
-              <div className="text-muted-foreground">depth: 3 | strength: 0.87 | hops: 3</div>
+              <motion.div
+                animate={{
+                  opacity: [1, 0.7, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="text-primary font-bold mb-2 flex items-center gap-2"
+              >
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="inline-block"
+                >
+                  ●
+                </motion.span>
+                [optimal path found]
+              </motion.div>
+              <div className="text-muted-foreground space-y-1">
+                <div className="flex justify-between gap-4">
+                  <span>depth:</span>
+                  <span className="text-primary font-medium">3</span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span>strength:</span>
+                  <span className="text-primary font-medium">0.87</span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span>hops:</span>
+                  <span className="text-primary font-medium">3</span>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
