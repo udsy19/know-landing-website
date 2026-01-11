@@ -49,237 +49,299 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How It Works - Network Visualization */}
+      {/* How It Works - Technical Network Graph */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto px-6 pt-12 pb-24 max-w-6xl border-t border-border/40"
+        className="container mx-auto px-6 pt-12 pb-24 max-w-7xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-16 text-center">Finding warm intros</h2>
-
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Network Graph Visualization */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative"
-          >
-            {/* Network Graph */}
-            <div className="relative h-[500px] flex items-center justify-center bg-muted/20 rounded-lg border border-border/40 p-8">
-              {/* Center - You */}
-              <motion.div
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, type: "spring" }}
-                className="absolute z-20 w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/60 border-2 border-background flex items-center justify-center shadow-lg"
-                style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-              >
-                <span className="text-xs font-bold text-primary-foreground">YOU</span>
-              </motion.div>
-
-              {/* 1st Degree Connections */}
-              {[
-                { angle: 0, name: 'Sarah', delay: 0.3, highlight: true },
-                { angle: 90, name: 'Alex', delay: 0.35, highlight: false },
-                { angle: 180, name: 'Emma', delay: 0.4, highlight: false },
-                { angle: 270, name: 'Mike', delay: 0.45, highlight: false },
-              ].map((person, i) => {
-                const radius = 120;
-                const x = 50 + radius * Math.cos((person.angle * Math.PI) / 180);
-                const y = 50 + radius * Math.sin((person.angle * Math.PI) / 180);
-
-                return (
-                  <motion.div key={i}>
-                    {/* Connection Line */}
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: person.delay, duration: 0.4 }}
-                      className={`absolute origin-center h-0.5 ${person.highlight ? 'bg-primary/60' : 'bg-border/40'}`}
-                      style={{
-                        left: '50%',
-                        top: '50%',
-                        width: `${radius}px`,
-                        transform: `rotate(${person.angle}deg)`,
-                      }}
-                    />
-                    {/* Person Node */}
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: person.delay + 0.2, type: "spring" }}
-                      className={`absolute w-14 h-14 rounded-full ${
-                        person.highlight
-                          ? 'bg-primary/30 border-2 border-primary'
-                          : 'bg-muted border-2 border-border'
-                      } flex items-center justify-center shadow-md`}
-                      style={{
-                        left: `${x}%`,
-                        top: `${y}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }}
-                    >
-                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
-                        {person.name}
-                      </span>
-                    </motion.div>
-                  </motion.div>
-                );
-              })}
-
-              {/* 2nd Degree - Connected to Sarah */}
-              {[
-                { angle: 30, name: 'Julia', delay: 0.6, highlight: true },
-                { angle: -30, name: 'Tom', delay: 0.65, highlight: false },
-              ].map((person, i) => {
-                const innerRadius = 120;
-                const outerRadius = 100;
-                const x1 = 50 + innerRadius * Math.cos(0);
-                const y1 = 50 + innerRadius * Math.sin(0);
-                const x2 = x1 + outerRadius * Math.cos((person.angle * Math.PI) / 180);
-                const y2 = y1 + outerRadius * Math.sin((person.angle * Math.PI) / 180);
-
-                return (
-                  <motion.div key={i}>
-                    {/* Connection Line to Sarah */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                      <motion.line
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        whileInView={{ pathLength: 1, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: person.delay, duration: 0.4 }}
-                        x1={`${x1}%`}
-                        y1={`${y1}%`}
-                        x2={`${x2}%`}
-                        y2={`${y2}%`}
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className={person.highlight ? 'text-primary/60' : 'text-border/40'}
-                      />
-                    </svg>
-                    {/* Person Node */}
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: person.delay + 0.2, type: "spring" }}
-                      className={`absolute w-12 h-12 rounded-full ${
-                        person.highlight
-                          ? 'bg-primary/20 border-2 border-primary/70'
-                          : 'bg-muted border-2 border-border/60'
-                      } flex items-center justify-center shadow-md`}
-                      style={{
-                        left: `${x2}%`,
-                        top: `${y2}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }}
-                    >
-                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
-                        {person.name}
-                      </span>
-                    </motion.div>
-                  </motion.div>
-                );
-              })}
-
-              {/* Degree Labels */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.8 }}
-                className="absolute bottom-4 left-4 space-y-2 text-xs font-mono"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-primary"></div>
-                  <span className="text-muted-foreground">Highlighted Path</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-muted border-2 border-border"></div>
-                  <span className="text-muted-foreground">Other Connections</span>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Right: Chat Interface */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="space-y-6"
-          >
-            {/* Chat Message */}
-            <div className="bg-background border border-border/40 rounded-lg p-4 shadow-sm">
-              <p className="text-sm text-muted-foreground mb-2">You</p>
-              <p className="text-lg">Who can intro me to Acme Ventures?</p>
-            </div>
-
-            {/* KNOW Response */}
-            <div className="bg-muted/30 border border-primary/20 rounded-lg p-5 shadow-sm space-y-4">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <p className="text-sm font-medium">KNOW</p>
-              </div>
-
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">Found 1 warm intro path:</p>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-md text-sm font-medium">
-                    You
-                  </div>
-                  <div className="text-primary">→</div>
-                  <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-md text-sm font-medium">
-                    Sarah Chen
-                  </div>
-                  <div className="text-primary">→</div>
-                  <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-md text-sm font-medium">
-                    Julia Park
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-border/40 space-y-2 text-sm">
-                  <div className="flex items-start gap-2">
-                    <span className="text-muted-foreground">•</span>
-                    <span className="text-muted-foreground">Sarah Chen: Last spoke 3 weeks ago, strong connection</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-muted-foreground">•</span>
-                    <span className="text-muted-foreground">Julia Park: Partner at Acme Ventures</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-muted-foreground">•</span>
-                    <span className="text-muted-foreground">Sarah emailed Julia 4x last month</span>
-                  </div>
-                </div>
-
-                <div className="pt-3">
-                  <button className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">
-                    Draft intro request
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+        <div className="mb-16">
+          <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-4 text-center">Network graph analysis</h2>
+          <p className="text-center text-muted-foreground text-sm font-mono">Real-time pathfinding through 3-4 degree connections</p>
         </div>
+
+        {/* Technical Network Graph with Axes */}
+        <div className="relative bg-background border border-border/40 rounded-lg p-8 mb-8">
+          {/* Grid background */}
+          <div className="absolute inset-8 opacity-20">
+            <svg className="w-full h-full">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-border"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+
+          <div className="relative h-[600px]">
+            {/* Y-axis label */}
+            <div className="absolute -left-2 top-1/2 -translate-y-1/2 -rotate-90 text-xs font-mono text-muted-foreground">
+              connection strength
+            </div>
+
+            {/* X-axis label */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-8 text-xs font-mono text-muted-foreground">
+              degree of separation
+            </div>
+
+            {/* Degree markers on X-axis */}
+            <div className="absolute bottom-4 left-[15%] text-xs font-mono text-muted-foreground">0°</div>
+            <div className="absolute bottom-4 left-[38%] text-xs font-mono text-muted-foreground">1°</div>
+            <div className="absolute bottom-4 left-[61%] text-xs font-mono text-muted-foreground">2°</div>
+            <div className="absolute bottom-4 left-[84%] text-xs font-mono text-muted-foreground">3°</div>
+
+            {/* Connection strength markers on Y-axis */}
+            <div className="absolute left-4 top-[15%] text-xs font-mono text-muted-foreground">high</div>
+            <div className="absolute left-4 top-[45%] text-xs font-mono text-muted-foreground">med</div>
+            <div className="absolute left-4 top-[75%] text-xs font-mono text-muted-foreground">low</div>
+
+            {/* Vertical degree separator lines */}
+            {[15, 38, 61, 84].map((left, i) => (
+              <motion.div
+                key={i}
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 + i * 0.05 }}
+                className="absolute w-px bg-border/30 origin-bottom"
+                style={{ left: `${left}%`, top: '8%', bottom: '8%' }}
+              />
+            ))}
+
+            {/* Center Node - 0° (You) */}
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, type: "spring" }}
+              className="absolute z-20"
+              style={{ left: '15%', top: '20%' }}
+            >
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/60 border-2 border-background flex items-center justify-center shadow-lg">
+                  <span className="text-xs font-bold text-primary-foreground">YOU</span>
+                </div>
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono text-muted-foreground whitespace-nowrap">
+                  node_0
+                </div>
+              </div>
+            </motion.div>
+
+            {/* 1° Degree Nodes */}
+            {[
+              { name: 'Sarah', y: 25, highlight: true, strength: 0.92 },
+              { name: 'Alex', y: 50, highlight: false, strength: 0.76 },
+              { name: 'Emma', y: 65, highlight: false, strength: 0.64 },
+            ].map((person, i) => (
+              <motion.div key={i}>
+                {/* Connection line */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+                  <motion.line
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    whileInView={{ pathLength: 1, opacity: 0.6 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + i * 0.1, duration: 0.6 }}
+                    x1="15%"
+                    y1="20%"
+                    x2="38%"
+                    y2={`${person.y}%`}
+                    stroke="currentColor"
+                    strokeWidth={person.highlight ? "2" : "1"}
+                    strokeDasharray={person.highlight ? "0" : "4 4"}
+                    className={person.highlight ? 'text-primary/60' : 'text-border/50'}
+                  />
+                </svg>
+
+                {/* Node */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 + i * 0.1, type: "spring" }}
+                  className="absolute z-10"
+                  style={{ left: '38%', top: `${person.y}%` }}
+                >
+                  <div className="relative">
+                    <div className={`w-12 h-12 rounded-full ${
+                      person.highlight
+                        ? 'bg-primary/30 border-2 border-primary'
+                        : 'bg-muted border border-border'
+                    } flex items-center justify-center shadow-md`}>
+                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {person.name}
+                      </span>
+                    </div>
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+                      σ={person.strength}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+
+            {/* 2° Degree Nodes */}
+            {[
+              { name: 'Marcus', y: 35, highlight: false, strength: 0.71, from: 25 },
+              { name: 'Julia', y: 20, highlight: true, strength: 0.88, from: 25 },
+            ].map((person, i) => (
+              <motion.div key={i}>
+                {/* Connection line */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+                  <motion.line
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    whileInView={{ pathLength: 1, opacity: 0.6 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 + i * 0.1, duration: 0.6 }}
+                    x1="38%"
+                    y1={`${person.from}%`}
+                    x2="61%"
+                    y2={`${person.y}%`}
+                    stroke="currentColor"
+                    strokeWidth={person.highlight ? "2" : "1"}
+                    strokeDasharray={person.highlight ? "0" : "4 4"}
+                    className={person.highlight ? 'text-primary/60' : 'text-border/50'}
+                  />
+                </svg>
+
+                {/* Node */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.9 + i * 0.1, type: "spring" }}
+                  className="absolute z-10"
+                  style={{ left: '61%', top: `${person.y}%` }}
+                >
+                  <div className="relative">
+                    <div className={`w-12 h-12 rounded-full ${
+                      person.highlight
+                        ? 'bg-primary/20 border-2 border-primary/70'
+                        : 'bg-muted border border-border/60'
+                    } flex items-center justify-center shadow-md`}>
+                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {person.name}
+                      </span>
+                    </div>
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+                      σ={person.strength}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+
+            {/* 3° Degree Node - Target */}
+            <motion.div>
+              {/* Connection line */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+                <motion.line
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 0.6 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.2, duration: 0.6 }}
+                  x1="61%"
+                  y1="20%"
+                  x2="84%"
+                  y2="25%"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-primary/60"
+                />
+              </svg>
+
+              {/* Target Node */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.3, type: "spring" }}
+                className="absolute z-10"
+                style={{ left: '84%', top: '25%' }}
+              >
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/50 flex items-center justify-center shadow-lg">
+                    <span className="text-xs font-bold text-primary">TARGET</span>
+                  </div>
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+                    σ=0.81
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Path highlight overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1.5 }}
+              className="absolute top-4 right-4 bg-primary/10 border border-primary/30 rounded px-3 py-2 text-xs font-mono"
+            >
+              <div className="text-primary font-semibold mb-1">[optimal path found]</div>
+              <div className="text-muted-foreground">depth: 3 | strength: 0.87 | hops: 3</div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Chat Interface Below Graph */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 1.6 }}
+          className="max-w-3xl mx-auto"
+        >
+          <div className="bg-muted/30 border border-border/40 rounded-lg p-6 font-mono text-sm space-y-4">
+            <div className="flex gap-3">
+              <span className="text-muted-foreground shrink-0">user:</span>
+              <span>find intro path to acme ventures partner</span>
+            </div>
+
+            <div className="flex gap-3 items-start">
+              <span className="text-primary shrink-0">[know]</span>
+              <div className="space-y-2 flex-1">
+                <div className="text-muted-foreground">analyzing network graph...</div>
+                <div className="text-muted-foreground">scanning 247 connections across 3 degrees</div>
+                <div className="mt-3 p-3 bg-background border border-primary/20 rounded">
+                  <div className="text-primary mb-2">path identified:</div>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">0°</span>
+                      <span>you</span>
+                    </div>
+                    <div className="flex items-center gap-2 ml-4">
+                      <span className="text-muted-foreground">→</span>
+                      <span>1° sarah_chen (σ=0.92, last_contact=21d)</span>
+                    </div>
+                    <div className="flex items-center gap-2 ml-8">
+                      <span className="text-muted-foreground">→</span>
+                      <span>2° julia_park (σ=0.88, freq=4/mo)</span>
+                    </div>
+                    <div className="flex items-center gap-2 ml-12">
+                      <span className="text-muted-foreground">→</span>
+                      <span className="text-primary">3° target: partner@acme_ventures</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-border/40 text-xs text-muted-foreground">
+                    path_confidence: 0.87 | estimated_response_time: &lt;48h
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.9 }}
-          className="mt-16 text-center text-muted-foreground font-light text-lg max-w-2xl mx-auto"
+          transition={{ delay: 1.8 }}
+          className="mt-12 text-center text-muted-foreground font-mono text-sm"
         >
-          Every connection in your network. Every path mapped. Every relationship remembered.
+          pathfinding algorithm analyzes connection strength, recency, and interaction frequency
         </motion.p>
       </motion.section>
 
