@@ -35,7 +35,7 @@ export default function Landing() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="text-xl md:text-2xl text-muted-foreground font-light max-w-xl leading-relaxed tracking-tight"
           >
-            KNOW maps your real relationships.
+            [know] maps your real relationships.
           </motion.p>
 
           <motion.p
@@ -353,7 +353,7 @@ export default function Landing() {
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">What it maps</h2>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">what [know] maps</h2>
         <div className="font-mono text-sm md:text-base w-full max-w-md bg-muted/30 p-6 rounded-sm border border-border/20">
           <div className="grid grid-cols-2 gap-y-4">
             <span className="text-muted-foreground">Sources</span>
@@ -374,7 +374,7 @@ export default function Landing() {
         </p>
       </motion.section>
 
-      {/* What KNOW refuses to do */}
+      {/* what [know] doesn't do */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -382,7 +382,7 @@ export default function Landing() {
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">What KNOW doesn't do</h2>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">what [know] doesn't do</h2>
         <ul className="space-y-3 font-light text-lg md:text-xl text-muted-foreground">
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
