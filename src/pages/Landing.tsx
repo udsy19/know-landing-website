@@ -1,427 +1,259 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Network Globe Component
-const NetworkGlobe = () => {
-  return (
-    <div className="relative w-full h-[400px] flex items-center justify-center">
-      {/* Orbiting connections */}
-      <motion.div
-        className="absolute w-64 h-64 rounded-full border border-primary/20"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      >
-        {[0, 1, 2, 3].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute w-3 h-3 rounded-full bg-primary/60"
-            style={{
-              top: "50%",
-              left: "50%",
-              marginTop: "-6px",
-              marginLeft: "-6px",
-            }}
-            animate={{
-              rotate: -360,
-            }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          >
-            <motion.div
-              className="absolute inset-0 rounded-full bg-primary"
-              animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-            />
-          </motion.div>
-        ))}
-      </motion.div>
+const BlinkingCursor = () => (
+  <motion.span
+    animate={{ opacity: [0, 1, 0] }}
+    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+    className="inline-block w-2 h-5 bg-primary ml-1 align-middle"
+  />
+);
 
-      <motion.div
-        className="absolute w-48 h-48 rounded-full border border-primary/30"
-        animate={{ rotate: -360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      >
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2.5 h-2.5 rounded-full bg-primary/70"
-            style={{
-              top: "50%",
-              left: "50%",
-              marginTop: "-5px",
-              marginLeft: "-5px",
-            }}
-            animate={{
-              rotate: 360,
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          />
-        ))}
-      </motion.div>
+const StatusDot = ({ status }: { status: string }) => (
+  <div className="flex items-center gap-2">
+    {status === "running" && (
+      <span className="relative flex h-2 w-2">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+    )}
+    <span>{status}</span>
+  </div>
+);
 
-      {/* Center node (You) */}
-      <motion.div
-        className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20"
-        animate={{
-          scale: [1, 1.05, 1],
-        }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <span className="text-sm font-medium text-primary-foreground">You</span>
-      </motion.div>
+const Typewriter = ({ text, onComplete, speed = 15 }: { text: string, onComplete?: () => void, speed?: number }) => {
+  const [displayText, setDisplayText] = useState("");
+  
+  useEffect(() => {
+    setDisplayText("");
+    if (!text) {
+      if (onComplete) onComplete();
+      return;
+    }
 
-      {/* Connecting lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none">
-        {[...Array(8)].map((_, i) => {
-          const angle = (i / 8) * 360;
-          const rad = (angle * Math.PI) / 180;
-          const x1 = 200;
-          const y1 = 200;
-          const x2 = 200 + Math.cos(rad) * 120;
-          const y2 = 200 + Math.sin(rad) * 120;
+    let i = 0;
+    const timer = setInterval(() => {
+      setDisplayText(text.substring(0, i + 1));
+      if (i + 1 >= text.length) {
+        clearInterval(timer);
+        if (onComplete) onComplete();
+      }
+      i += 1;
+    }, speed);
 
-          return (
-            <motion.line
-              key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke="currentColor"
-              strokeWidth="1"
-              className="text-primary/20"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 2, delay: i * 0.1 }}
-            />
-          );
-        })}
-      </svg>
-    </div>
-  );
+    return () => clearInterval(timer);
+  }, [text, speed, onComplete]);
+
+  return <span>{displayText}</span>;
 };
 
-// Connection Path Visualization
-const ConnectionPath = () => {
-  const nodes = [
-    { name: "You", degree: 0 },
-    { name: "Sarah", degree: 1 },
-    { name: "Marcus", degree: 2 },
-    { name: "Target", degree: 3 },
-  ];
-
-  return (
-    <div className="flex items-center justify-center gap-4 py-8">
-      {nodes.map((node, i) => (
-        <div key={i} className="flex items-center gap-4">
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.2 }}
-            className="flex flex-col items-center gap-2"
-          >
-            <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                node.degree === 0
-                  ? "bg-gradient-to-br from-primary to-primary/60"
-                  : "bg-muted border-2 border-primary/40"
-              }`}
-            >
-              <span className="text-xs font-medium">{node.name}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">
-              {node.degree === 0 ? "1st" : `${node.degree + 1}${node.degree === 1 ? 'nd' : node.degree === 2 ? 'rd' : 'th'}`}
-            </span>
-          </motion.div>
-          {i < nodes.length - 1 && (
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2 + 0.1 }}
-              className="w-8 h-0.5 bg-gradient-to-r from-primary/60 to-primary/20"
-              style={{ originX: 0 }}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
+const transcriptLines = [
+  { text: "$ know", type: "command" },
+  { text: "Who should I talk to this week?", type: "output" },
+  { text: "[ SARAH CHEN — 1ST DEGREE ]", type: "marker" },
+  { text: "know: last spoke 3 weeks ago. co-founder at AI startup.", type: "output" },
+  { text: "know: you mentioned wanting an intro to her investors.", type: "output" },
+  { text: "[ MARCUS LEE — 2ND DEGREE ]", type: "marker" },
+  { text: "know: met at conference. works at OpenAI. connection: Sarah.", type: "output" },
+  { text: "know: you're drifting. last contact: 2 months.", type: "output" },
+  { text: "$ find me a warm intro to Acme Ventures", type: "command" },
+  { text: "[ SEARCHING NETWORK ]", type: "marker" },
+  { text: "know: path found: You → Sarah Chen → Julia Park (Partner, Acme)", type: "output" },
+  { text: "know: Sarah emailed Julia 4x last month. strong connection.", type: "output" },
+  { text: "know: success rate for this path: high.", type: "output" },
+  { text: "$ draft an intro ask to Sarah", type: "command" },
+  { text: "[ DRAFTING ]", type: "marker" },
+  { text: "know: 'Hey Sarah, hope things are going well at...'", type: "output" },
+  { text: "know: full message ready. click to view.", type: "output", hasCursor: true },
+];
 
 export default function Landing() {
-  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+  const [activeLineIndex, setActiveLineIndex] = useState(0);
+  const [showFinalSentence, setShowFinalSentence] = useState(false);
 
-  const features = [
-    {
-      title: "Chat-First Intelligence",
-      description: "Ask questions naturally. Get instant answers about your network.",
-    },
-    {
-      title: "Warm Intro Paths",
-      description: "Find connections 3-4 degrees away. Know who to ask for intros.",
-    },
-    {
-      title: "Relationship Context",
-      description: "Never forget. Last spoke, shared interests, connection strength.",
-    },
-    {
-      title: "Smart Suggestions",
-      description: "Who to follow up with. Who you're drifting from. When to reconnect.",
-    },
-  ];
+  const handleLineComplete = () => {
+    if (activeLineIndex < transcriptLines.length - 1) {
+      setActiveLineIndex((prev) => prev + 1);
+    } else {
+      setShowFinalSentence(true);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Hero Section */}
-      <section className="container mx-auto px-6 pt-20 md:pt-32 pb-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-5xl md:text-7xl font-bold leading-tight mb-6"
-              >
-                Reach anyone.<br />
-                <span className="text-primary">3 degrees away.</span>
-              </motion.h1>
+    <div className="crt min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
+      
+      {/* Hero Section - Progressive Disclosure */}
+      <section className="container mx-auto px-6 pt-32 pb-12 max-w-3xl min-h-[40vh] flex flex-col justify-center">
+        <motion.h1
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="text-4xl md:text-6xl font-light leading-[1.1] mb-8 tracking-tighter text-glow"
+        >
+          Your network extends further<br />than you think.
+        </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl text-muted-foreground mb-8 leading-relaxed"
-              >
-                KNOW maps your real relationships from email and calendar. Chat to find warm intro paths to anyone in your extended network.
-              </motion.p>
+        <div className="space-y-1">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-xl md:text-2xl text-muted-foreground font-light max-w-xl leading-relaxed tracking-tight"
+          >
+            KNOW maps your real relationships.
+          </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                <button className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity">
-                  Get Started
-                </button>
-                <button className="px-8 py-3 border border-border rounded-lg font-medium hover:bg-muted transition-colors">
-                  See How It Works
-                </button>
-              </motion.div>
-            </div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.6 }}
+            className="text-xl md:text-2xl text-muted-foreground font-light max-w-xl leading-relaxed tracking-tight"
+          >
+            Chat to reach anyone 3-4 degrees away.
+          </motion.p>
+        </div>
+      </section>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              <NetworkGlobe />
-            </motion.div>
+      {/* Live Terminal Transcript */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+        transition={{ duration: 0.5 }}
+        className="container mx-auto px-6 pt-12 pb-24 max-w-3xl border-t border-border/40"
+      >
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">How it works</h2>
+        <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20 min-h-[400px]">
+          {transcriptLines.map((line, index) => {
+            if (index > activeLineIndex) return null;
+            
+            const isLast = index === transcriptLines.length - 1;
+            const isTyping = index === activeLineIndex;
+            
+            return (
+              <div key={index} className={line.type === "marker" ? "text-muted-foreground/40 py-2 text-xs uppercase tracking-widest" : ""}>
+                {line.type === "command" && <span className="text-muted-foreground select-none mr-2">$</span>}
+                {isTyping ? (
+                  <Typewriter 
+                    text={line.text} 
+                    onComplete={handleLineComplete} 
+                    speed={15} 
+                  />
+                ) : (
+                  <span>{line.text}</span>
+                )}
+                {line.hasCursor && isLast && !isTyping && <BlinkingCursor />}
+                {isTyping && <BlinkingCursor />}
+              </div>
+            );
+          })}
+        </div>
+        <motion.p
+          className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl min-h-[3rem]"
+        >
+          {showFinalSentence && (
+             <Typewriter
+               text="Know tells you who to talk to, why, and how — using your real relationships."
+               speed={30}
+             />
+          )}
+        </motion.p>
+      </motion.section>
+
+      {/* State of the System */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
+      >
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">What it maps</h2>
+        <div className="font-mono text-sm md:text-base w-full max-w-md bg-muted/30 p-6 rounded-sm border border-border/20">
+          <div className="grid grid-cols-2 gap-y-4">
+            <span className="text-muted-foreground">Sources</span>
+            <span>email + calendar</span>
+
+            <span className="text-muted-foreground">Network depth</span>
+            <span>3-4 degrees</span>
+
+            <span className="text-muted-foreground">Context</span>
+            <span>conversations</span>
+
+            <span className="text-muted-foreground">Privacy</span>
+            <span>local only</span>
           </div>
         </div>
-      </section>
+        <p className="mt-8 text-muted-foreground font-light text-sm">
+          Your relationship graph is built from real interactions.
+        </p>
+      </motion.section>
 
-      {/* Connection Path Demo */}
-      <section className="container mx-auto px-6 py-16 border-t border-border">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Find warm intro paths
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              KNOW shows you exactly how to reach anyone through your network
-            </p>
-          </motion.div>
+      {/* What KNOW refuses to do */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
+      >
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">What KNOW doesn't do</h2>
+        <ul className="space-y-3 font-light text-lg md:text-xl text-muted-foreground">
+          <li className="flex items-center gap-3">
+            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+            No dashboards
+          </li>
+          <li className="flex items-center gap-3">
+            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+            No CRM views
+          </li>
+          <li className="flex items-center gap-3">
+            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+            No manual contact management
+          </li>
+          <li className="flex items-center gap-3">
+            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+            No social feed tracking
+          </li>
+          <li className="flex items-center gap-3">
+            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+            No analytics pages
+          </li>
+          <li className="flex items-center gap-3">
+            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+            No team features
+          </li>
+        </ul>
+      </motion.section>
 
-          <ConnectionPath />
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 bg-muted/30 rounded-xl p-6 border border-border"
-          >
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary mt-2" />
-                <div>
-                  <p className="font-medium">Sarah Chen</p>
-                  <p className="text-sm text-muted-foreground">Last spoke 3 weeks ago · Strong connection</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 ml-6">
-                <div className="w-2 h-2 rounded-full bg-primary/60 mt-2" />
-                <div>
-                  <p className="font-medium">Marcus Rodriguez</p>
-                  <p className="text-sm text-muted-foreground">Introduced by Sarah · Works at Acme Corp</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 ml-12">
-                <div className="w-2 h-2 rounded-full bg-primary/40 mt-2" />
-                <div>
-                  <p className="font-medium">Your Target Contact</p>
-                  <p className="text-sm text-muted-foreground">Marcus emails them regularly · High success rate</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+      {/* Pricing */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
+      >
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">Pricing</h2>
+        <div className="space-y-2">
+          <p className="text-4xl md:text-5xl font-light tracking-tight">$24 / month</p>
+          <p className="text-muted-foreground font-light text-lg">Your network graph stays current. Your relationships stay maintained.</p>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Features Grid */}
-      <section className="container mx-auto px-6 py-16 border-t border-border">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Your network, intelligently mapped
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onHoverStart={() => setHoveredFeature(index)}
-                onHoverEnd={() => setHoveredFeature(null)}
-                className="p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-all cursor-pointer"
-              >
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
+      {/* Install */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-6 py-32 max-w-3xl border-t border-border/40 mb-12"
+      >
+        <div className="font-mono text-lg md:text-xl bg-foreground text-background inline-block px-4 py-2">
+          $ brew install know
         </div>
-      </section>
+      </motion.section>
 
-      {/* Simple Promise */}
-      <section className="container mx-auto px-6 py-24 border-t border-border">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Just chat. Get connected.
-            </h2>
-            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              KNOW tells you who to talk to, why, and how — using your real relationships.
-            </p>
-
-            <div className="bg-muted/30 rounded-xl p-8 border border-border max-w-2xl mx-auto">
-              <div className="space-y-4 text-left">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-sm">💬</span>
-                  </div>
-                  <div>
-                    <p className="font-medium mb-1">"Who knows someone at Stripe?"</p>
-                    <p className="text-sm text-muted-foreground">Get instant intro paths</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-sm">🎯</span>
-                  </div>
-                  <div>
-                    <p className="font-medium mb-1">"Who should I follow up with?"</p>
-                    <p className="text-sm text-muted-foreground">Never lose track of relationships</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-sm">✍️</span>
-                  </div>
-                  <div>
-                    <p className="font-medium mb-1">"Draft an intro to Sarah"</p>
-                    <p className="text-sm text-muted-foreground">Get contextual message templates</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* What KNOW doesn't do */}
-      <section className="container mx-auto px-6 py-16 border-t border-border">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-muted-foreground">
-              What KNOW doesn't do
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-4">
-            {["Dashboards", "CRM views", "Manual contact management", "Social feed tracking", "Analytics pages", "Team features"].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-2 text-muted-foreground"
-              >
-                <span className="text-primary/50">×</span>
-                <span>{item}</span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing & CTA */}
-      <section className="container mx-auto px-6 py-24 border-t border-border">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-12 border border-primary/20">
-              <h2 className="text-4xl md:text-6xl font-bold mb-4">$24/month</h2>
-              <p className="text-xl text-muted-foreground mb-8">
-                Your network graph stays current. Your relationships stay maintained.
-              </p>
-              <button className="px-10 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:opacity-90 transition-opacity">
-                Start Free Trial
-              </button>
-              <p className="text-sm text-muted-foreground mt-4">
-                Connect your email and calendar in 2 minutes
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="container mx-auto px-6 py-12 border-t border-border">
-        <div className="max-w-6xl mx-auto text-center text-muted-foreground text-sm">
-          <p>© 2026 KNOW. Your relationships, intelligently mapped.</p>
-        </div>
-      </footer>
     </div>
   );
 }
