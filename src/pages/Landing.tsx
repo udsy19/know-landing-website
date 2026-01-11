@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 const StatusDot = ({ status }: { status: string }) => (
   <div className="flex items-center gap-2">
@@ -12,7 +13,66 @@ const StatusDot = ({ status }: { status: string }) => (
   </div>
 );
 
+interface NodeTooltipProps {
+  name: string;
+  details: {
+    company?: string;
+    title?: string;
+    lastContact?: string;
+    strength: number;
+    emails?: number;
+    meetings?: number;
+    sharedContacts?: number;
+  };
+}
+
+const NodeTooltip = ({ name, details }: NodeTooltipProps) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.9, y: 10 }}
+    animate={{ opacity: 1, scale: 1, y: 0 }}
+    exit={{ opacity: 0, scale: 0.9, y: 10 }}
+    className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full z-50 bg-background border-2 border-primary/40 rounded-lg p-3 shadow-xl shadow-primary/20 min-w-[200px] pointer-events-none"
+  >
+    <div className="text-xs font-mono space-y-1">
+      <div className="font-bold text-primary mb-2">{name}</div>
+      {details.company && <div className="text-muted-foreground">{details.company}</div>}
+      {details.title && <div className="text-muted-foreground">{details.title}</div>}
+      <div className="pt-2 border-t border-border/40 space-y-1">
+        <div className="flex justify-between gap-4">
+          <span className="text-muted-foreground">Strength:</span>
+          <span className="text-primary">{details.strength}</span>
+        </div>
+        {details.lastContact && (
+          <div className="flex justify-between gap-4">
+            <span className="text-muted-foreground">Last contact:</span>
+            <span>{details.lastContact}</span>
+          </div>
+        )}
+        {details.emails && (
+          <div className="flex justify-between gap-4">
+            <span className="text-muted-foreground">Emails:</span>
+            <span>{details.emails}/month</span>
+          </div>
+        )}
+        {details.meetings && (
+          <div className="flex justify-between gap-4">
+            <span className="text-muted-foreground">Meetings:</span>
+            <span>{details.meetings}/month</span>
+          </div>
+        )}
+        {details.sharedContacts && (
+          <div className="flex justify-between gap-4">
+            <span className="text-muted-foreground">Shared:</span>
+            <span>{details.sharedContacts} contacts</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </motion.div>
+);
+
 export default function Landing() {
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   return (
     <div className="crt min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
@@ -183,9 +243,9 @@ export default function Landing() {
 
             {/* 1° Degree Nodes */}
             {[
-              { name: 'Sarah', y: 25, highlight: true, strength: 0.92 },
-              { name: 'Alex', y: 50, highlight: false, strength: 0.76 },
-              { name: 'Emma', y: 65, highlight: false, strength: 0.64 },
+              { name: 'Sarah', y: 25, highlight: true, strength: 0.92, company: 'Vertex AI', title: 'Co-founder', lastContact: '3 weeks ago', emails: 12, meetings: 2, sharedContacts: 47 },
+              { name: 'Alex', y: 50, highlight: false, strength: 0.76, company: 'TechCorp', title: 'Engineering Lead', lastContact: '1 month ago', emails: 6, meetings: 1, sharedContacts: 23 },
+              { name: 'Emma', y: 65, highlight: false, strength: 0.64, company: 'Startup Labs', title: 'Product Designer', lastContact: '2 months ago', emails: 4, meetings: 0, sharedContacts: 18 },
             ].map((person, i) => (
               <motion.div key={i}>
                 {/* Connection line with animated gradient */}
@@ -230,8 +290,13 @@ export default function Landing() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.5 + i * 0.1, type: "spring", stiffness: 200 }}
                   whileHover={{ scale: 1.1 }}
+                  drag
+                  dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
+                  dragElastic={0.1}
                   className="absolute z-10"
                   style={{ left: '38%', top: `${person.y}%` }}
+                  onHoverStart={() => setHoveredNode(`1-${i}`)}
+                  onHoverEnd={() => setHoveredNode(null)}
                 >
                   <div className="relative">
                     {person.highlight && (
@@ -253,7 +318,7 @@ export default function Landing() {
                       person.highlight
                         ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary shadow-lg shadow-primary/30'
                         : 'bg-muted border border-border shadow-md'
-                    } flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer`}>
+                    } flex items-center justify-center backdrop-blur-sm transition-all cursor-grab active:cursor-grabbing`}>
                       <span className={`text-xs font-medium ${person.highlight ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                         {person.name}
                       </span>
@@ -266,6 +331,20 @@ export default function Landing() {
                     >
                       σ={person.strength}
                     </motion.div>
+                    {hoveredNode === `1-${i}` && (
+                      <NodeTooltip
+                        name={person.name}
+                        details={{
+                          company: person.company,
+                          title: person.title,
+                          lastContact: person.lastContact,
+                          strength: person.strength,
+                          emails: person.emails,
+                          meetings: person.meetings,
+                          sharedContacts: person.sharedContacts
+                        }}
+                      />
+                    )}
                   </div>
                 </motion.div>
               </motion.div>
@@ -273,8 +352,8 @@ export default function Landing() {
 
             {/* 2° Degree Nodes */}
             {[
-              { name: 'Marcus', y: 35, highlight: false, strength: 0.71, from: 25 },
-              { name: 'Julia', y: 20, highlight: true, strength: 0.88, from: 25 },
+              { name: 'Marcus', y: 35, highlight: false, strength: 0.71, from: 25, company: 'DataScale', title: 'VP Engineering', lastContact: 'via Sarah', emails: 0, sharedContacts: 12 },
+              { name: 'Julia', y: 20, highlight: true, strength: 0.88, from: 25, company: 'Acme Ventures', title: 'Partner', lastContact: 'via Sarah', emails: 4, meetings: 1, sharedContacts: 31 },
             ].map((person, i) => (
               <motion.div key={`deg2-${i}`}>
                 {/* Connection line with gradient */}
@@ -319,8 +398,13 @@ export default function Landing() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.9 + i * 0.1, type: "spring", stiffness: 200 }}
                   whileHover={{ scale: 1.1 }}
+                  drag
+                  dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
+                  dragElastic={0.1}
                   className="absolute z-10"
                   style={{ left: '61%', top: `${person.y}%` }}
+                  onHoverStart={() => setHoveredNode(`2-${i}`)}
+                  onHoverEnd={() => setHoveredNode(null)}
                 >
                   <div className="relative">
                     {person.highlight && (
@@ -342,7 +426,7 @@ export default function Landing() {
                       person.highlight
                         ? 'bg-gradient-to-br from-primary/30 to-primary/15 border-2 border-primary/70 shadow-lg shadow-primary/20'
                         : 'bg-muted border border-border/60 shadow-md'
-                    } flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer`}>
+                    } flex items-center justify-center backdrop-blur-sm transition-all cursor-grab active:cursor-grabbing`}>
                       <span className={`text-xs font-medium ${person.highlight ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                         {person.name}
                       </span>
@@ -355,6 +439,20 @@ export default function Landing() {
                     >
                       σ={person.strength}
                     </motion.div>
+                    {hoveredNode === `2-${i}` && (
+                      <NodeTooltip
+                        name={person.name}
+                        details={{
+                          company: person.company,
+                          title: person.title,
+                          lastContact: person.lastContact,
+                          strength: person.strength,
+                          emails: person.emails,
+                          meetings: person.meetings,
+                          sharedContacts: person.sharedContacts
+                        }}
+                      />
+                    )}
                   </div>
                 </motion.div>
               </motion.div>
@@ -403,8 +501,13 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: 1.3, type: "spring", stiffness: 150 }}
                 whileHover={{ scale: 1.15 }}
+                drag
+                dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
+                dragElastic={0.1}
                 className="absolute z-10"
                 style={{ left: '84%', top: '25%' }}
+                onHoverStart={() => setHoveredNode('target')}
+                onHoverEnd={() => setHoveredNode(null)}
               >
                 <div className="relative">
                   {/* Multiple pulsing rings */}
@@ -434,7 +537,7 @@ export default function Landing() {
                     }}
                     className="absolute inset-0 rounded-full bg-primary"
                   />
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 border-3 border-primary shadow-xl shadow-primary/40 flex items-center justify-center backdrop-blur-sm cursor-pointer transition-all">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 border-3 border-primary shadow-xl shadow-primary/40 flex items-center justify-center backdrop-blur-sm cursor-grab active:cursor-grabbing transition-all">
                     <span className="text-xs font-bold text-primary">TARGET</span>
                   </div>
                   <motion.div
@@ -445,6 +548,18 @@ export default function Landing() {
                   >
                     σ=0.81
                   </motion.div>
+                  {hoveredNode === 'target' && (
+                    <NodeTooltip
+                      name="Target Contact"
+                      details={{
+                        company: 'Acme Ventures',
+                        title: 'Managing Partner',
+                        lastContact: 'via Julia',
+                        strength: 0.81,
+                        sharedContacts: 8
+                      }}
+                    />
+                  )}
                 </div>
               </motion.div>
             </motion.div>
@@ -543,15 +658,26 @@ export default function Landing() {
           </div>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 1.8 }}
-          className="mt-12 text-center text-muted-foreground font-mono text-sm"
-        >
-          pathfinding algorithm analyzes connection strength, recency, and interaction frequency
-        </motion.p>
+        <div className="mt-12 space-y-4">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.8 }}
+            className="text-center text-muted-foreground font-mono text-sm"
+          >
+            pathfinding algorithm analyzes connection strength, recency, and interaction frequency
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 2 }}
+            className="text-center text-primary/70 font-mono text-xs"
+          >
+            💡 hover over nodes for details · drag nodes to reposition · fully interactive
+          </motion.p>
+        </div>
       </motion.section>
 
       {/* State of the System */}
@@ -563,23 +689,77 @@ export default function Landing() {
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
         <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">what [know] maps</h2>
-        <div className="font-mono text-sm md:text-base w-full max-w-md bg-muted/30 p-6 rounded-sm border border-border/20">
-          <div className="grid grid-cols-2 gap-y-4">
-            <span className="text-muted-foreground">Sources</span>
-            <span>email + calendar</span>
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="font-mono text-sm bg-muted/30 p-6 rounded-sm border border-border/20">
+            <div className="text-primary font-semibold mb-4">Data Sources</div>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>Email (Gmail, Outlook, IMAP)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>Calendar (Google, Outlook, iCal)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>LinkedIn connections</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>Slack/Discord messages</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>Twitter/X interactions</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>GitHub collaborations</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>Zoom/Meet transcripts</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span>SMS/iMessage (optional)</span>
+              </div>
+            </div>
+          </div>
 
-            <span className="text-muted-foreground">Network depth</span>
-            <span>3-4 degrees</span>
-
-            <span className="text-muted-foreground">Context</span>
-            <span>conversations</span>
-
-            <span className="text-muted-foreground">Privacy</span>
-            <span>local only</span>
+          <div className="font-mono text-sm bg-muted/30 p-6 rounded-sm border border-border/20">
+            <div className="text-primary font-semibold mb-4">Network Analysis</div>
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">Depth:</span>
+                <span>3-4 degrees</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">Avg contacts:</span>
+                <span>500-2000</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">Extended network:</span>
+                <span>50k-200k</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">Update frequency:</span>
+                <span>real-time</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">Privacy:</span>
+                <span>local only</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">Encryption:</span>
+                <span>end-to-end</span>
+              </div>
+            </div>
           </div>
         </div>
-        <p className="mt-8 text-muted-foreground font-light text-sm">
-          Your relationship graph is built from real interactions.
+        <p className="mt-8 text-muted-foreground font-light text-sm text-center">
+          Your relationship graph is built from real interactions across all your communication channels.
         </p>
       </motion.section>
 
