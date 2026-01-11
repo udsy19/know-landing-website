@@ -1,13 +1,4 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-
-const BlinkingCursor = () => (
-  <motion.span
-    animate={{ opacity: [0, 1, 0] }}
-    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-    className="inline-block w-2 h-5 bg-primary ml-1 align-middle"
-  />
-);
 
 const StatusDot = ({ status }: { status: string }) => (
   <div className="flex items-center gap-2">
@@ -21,63 +12,7 @@ const StatusDot = ({ status }: { status: string }) => (
   </div>
 );
 
-const Typewriter = ({ text, onComplete, speed = 15 }: { text: string, onComplete?: () => void, speed?: number }) => {
-  const [displayText, setDisplayText] = useState("");
-  
-  useEffect(() => {
-    setDisplayText("");
-    if (!text) {
-      if (onComplete) onComplete();
-      return;
-    }
-
-    let i = 0;
-    const timer = setInterval(() => {
-      setDisplayText(text.substring(0, i + 1));
-      if (i + 1 >= text.length) {
-        clearInterval(timer);
-        if (onComplete) onComplete();
-      }
-      i += 1;
-    }, speed);
-
-    return () => clearInterval(timer);
-  }, [text, speed, onComplete]);
-
-  return <span>{displayText}</span>;
-};
-
-const transcriptLines = [
-  { text: "$ know", type: "command" },
-  { text: "Who should I talk to this week?", type: "output" },
-  { text: "[ SARAH CHEN — 1ST DEGREE ]", type: "marker" },
-  { text: "know: last spoke 3 weeks ago. co-founder at AI startup.", type: "output" },
-  { text: "know: you mentioned wanting an intro to her investors.", type: "output" },
-  { text: "[ MARCUS LEE — 2ND DEGREE ]", type: "marker" },
-  { text: "know: met at conference. works at OpenAI. connection: Sarah.", type: "output" },
-  { text: "know: you're drifting. last contact: 2 months.", type: "output" },
-  { text: "$ find me a warm intro to Acme Ventures", type: "command" },
-  { text: "[ SEARCHING NETWORK ]", type: "marker" },
-  { text: "know: path found: You → Sarah Chen → Julia Park (Partner, Acme)", type: "output" },
-  { text: "know: Sarah emailed Julia 4x last month. strong connection.", type: "output" },
-  { text: "know: success rate for this path: high.", type: "output" },
-  { text: "$ draft an intro ask to Sarah", type: "command" },
-  { text: "[ DRAFTING ]", type: "marker" },
-  { text: "know: 'Hey Sarah, hope things are going well at...'", type: "output" },
-  { text: "know: full message ready. click to view.", type: "output", hasCursor: true },
-];
-
 export default function Landing() {
-  const [activeLineIndex, setActiveLineIndex] = useState(0);
-  const [showFinalSentence, setShowFinalSentence] = useState(false);
-
-  const handleLineComplete = () => {
-    if (activeLineIndex < transcriptLines.length - 1) {
-      setActiveLineIndex((prev) => prev + 1);
-    } else {
-      setShowFinalSentence(true);
-    }
-  };
 
   return (
     <div className="crt min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
@@ -114,49 +49,119 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Live Terminal Transcript */}
+      {/* How It Works - Visual Flow */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto px-6 pt-12 pb-24 max-w-3xl border-t border-border/40"
+        className="container mx-auto px-6 pt-12 pb-24 max-w-5xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">How it works</h2>
-        <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20 min-h-[400px]">
-          {transcriptLines.map((line, index) => {
-            if (index > activeLineIndex) return null;
-            
-            const isLast = index === transcriptLines.length - 1;
-            const isTyping = index === activeLineIndex;
-            
-            return (
-              <div key={index} className={line.type === "marker" ? "text-muted-foreground/40 py-2 text-xs uppercase tracking-widest" : ""}>
-                {line.type === "command" && <span className="text-muted-foreground select-none mr-2">$</span>}
-                {isTyping ? (
-                  <Typewriter 
-                    text={line.text} 
-                    onComplete={handleLineComplete} 
-                    speed={15} 
-                  />
-                ) : (
-                  <span>{line.text}</span>
-                )}
-                {line.hasCursor && isLast && !isTyping && <BlinkingCursor />}
-                {isTyping && <BlinkingCursor />}
-              </div>
-            );
-          })}
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-16 text-center">How it works</h2>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Step 1 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col items-center text-center"
+          >
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
+              <span className="text-2xl">📧</span>
+              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                1
+              </span>
+            </div>
+            <h3 className="text-xl font-medium mb-3">Connect</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Link your email and calendar. KNOW passively builds your relationship graph from real interactions.
+            </p>
+          </motion.div>
+
+          {/* Step 2 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col items-center text-center"
+          >
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
+              <span className="text-2xl">💬</span>
+              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                2
+              </span>
+            </div>
+            <h3 className="text-xl font-medium mb-3">Ask</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Chat naturally. "Who knows someone at Stripe?" Find warm intro paths 3-4 degrees away instantly.
+            </p>
+          </motion.div>
+
+          {/* Step 3 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col items-center text-center"
+          >
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
+              <span className="text-2xl">🎯</span>
+              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                3
+              </span>
+            </div>
+            <h3 className="text-xl font-medium mb-3">Connect</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Get intro drafts, relationship context, and suggestions. Never lose track of who matters.
+            </p>
+          </motion.div>
         </div>
-        <motion.p
-          className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl min-h-[3rem]"
+
+        {/* Example Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-16 bg-muted/30 border border-border/40 rounded-lg p-6 md:p-8"
         >
-          {showFinalSentence && (
-             <Typewriter
-               text="Know tells you who to talk to, why, and how — using your real relationships."
-               speed={30}
-             />
-          )}
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">👤</div>
+              <div className="flex-1">
+                <p className="font-medium text-sm text-muted-foreground mb-1">You ask:</p>
+                <p className="text-lg">"Who can intro me to Acme Ventures?"</p>
+              </div>
+            </div>
+
+            <div className="pl-11 border-l-2 border-primary/30 ml-4 py-3">
+              <p className="font-medium text-sm text-muted-foreground mb-2">KNOW finds:</p>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="px-2 py-1 bg-primary/10 rounded">You</span>
+                <span className="text-primary">→</span>
+                <span className="px-2 py-1 bg-primary/10 rounded">Sarah Chen</span>
+                <span className="text-primary">→</span>
+                <span className="px-2 py-1 bg-primary/10 rounded">Julia Park</span>
+              </div>
+              <p className="text-muted-foreground mt-3 text-sm">
+                Sarah emailed Julia 4x last month. Strong connection. High success rate.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 text-center text-muted-foreground font-light text-lg max-w-2xl mx-auto"
+        >
+          Know tells you who to talk to, why, and how — using your real relationships.
         </motion.p>
       </motion.section>
 
@@ -241,7 +246,7 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* Install */}
+      {/* Waitlist */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -249,8 +254,19 @@ export default function Landing() {
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-32 max-w-3xl border-t border-border/40 mb-12"
       >
-        <div className="font-mono text-lg md:text-xl bg-foreground text-background inline-block px-4 py-2">
-          $ brew install know
+        <div className="text-center">
+          <h2 className="text-3xl md:text-5xl font-light mb-6">Join the waitlist</h2>
+          <p className="text-muted-foreground mb-8 text-lg">Be the first to map your network.</p>
+          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="your@email.com"
+              className="flex-1 px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+            <button className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
+              Join Waitlist
+            </button>
+          </div>
         </div>
       </motion.section>
 
