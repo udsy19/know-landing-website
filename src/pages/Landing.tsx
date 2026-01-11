@@ -49,119 +49,237 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How It Works - Visual Flow */}
+      {/* How It Works - Network Visualization */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -200px 0px" }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto px-6 pt-12 pb-24 max-w-5xl border-t border-border/40"
+        className="container mx-auto px-6 pt-12 pb-24 max-w-6xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-16 text-center">How it works</h2>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-16 text-center">Finding warm intros</h2>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Step 1 */}
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Network Graph Visualization */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-col items-center text-center"
+            transition={{ duration: 0.6 }}
+            className="relative"
           >
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
-              <span className="text-2xl">📧</span>
-              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                1
-              </span>
+            {/* Network Graph */}
+            <div className="relative h-[500px] flex items-center justify-center bg-muted/20 rounded-lg border border-border/40 p-8">
+              {/* Center - You */}
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, type: "spring" }}
+                className="absolute z-20 w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/60 border-2 border-background flex items-center justify-center shadow-lg"
+                style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+              >
+                <span className="text-xs font-bold text-primary-foreground">YOU</span>
+              </motion.div>
+
+              {/* 1st Degree Connections */}
+              {[
+                { angle: 0, name: 'Sarah', delay: 0.3, highlight: true },
+                { angle: 90, name: 'Alex', delay: 0.35, highlight: false },
+                { angle: 180, name: 'Emma', delay: 0.4, highlight: false },
+                { angle: 270, name: 'Mike', delay: 0.45, highlight: false },
+              ].map((person, i) => {
+                const radius = 120;
+                const x = 50 + radius * Math.cos((person.angle * Math.PI) / 180);
+                const y = 50 + radius * Math.sin((person.angle * Math.PI) / 180);
+
+                return (
+                  <motion.div key={i}>
+                    {/* Connection Line */}
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: person.delay, duration: 0.4 }}
+                      className={`absolute origin-center h-0.5 ${person.highlight ? 'bg-primary/60' : 'bg-border/40'}`}
+                      style={{
+                        left: '50%',
+                        top: '50%',
+                        width: `${radius}px`,
+                        transform: `rotate(${person.angle}deg)`,
+                      }}
+                    />
+                    {/* Person Node */}
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: person.delay + 0.2, type: "spring" }}
+                      className={`absolute w-14 h-14 rounded-full ${
+                        person.highlight
+                          ? 'bg-primary/30 border-2 border-primary'
+                          : 'bg-muted border-2 border-border'
+                      } flex items-center justify-center shadow-md`}
+                      style={{
+                        left: `${x}%`,
+                        top: `${y}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    >
+                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {person.name}
+                      </span>
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+
+              {/* 2nd Degree - Connected to Sarah */}
+              {[
+                { angle: 30, name: 'Julia', delay: 0.6, highlight: true },
+                { angle: -30, name: 'Tom', delay: 0.65, highlight: false },
+              ].map((person, i) => {
+                const innerRadius = 120;
+                const outerRadius = 100;
+                const x1 = 50 + innerRadius * Math.cos(0);
+                const y1 = 50 + innerRadius * Math.sin(0);
+                const x2 = x1 + outerRadius * Math.cos((person.angle * Math.PI) / 180);
+                const y2 = y1 + outerRadius * Math.sin((person.angle * Math.PI) / 180);
+
+                return (
+                  <motion.div key={i}>
+                    {/* Connection Line to Sarah */}
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                      <motion.line
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        whileInView={{ pathLength: 1, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: person.delay, duration: 0.4 }}
+                        x1={`${x1}%`}
+                        y1={`${y1}%`}
+                        x2={`${x2}%`}
+                        y2={`${y2}%`}
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className={person.highlight ? 'text-primary/60' : 'text-border/40'}
+                      />
+                    </svg>
+                    {/* Person Node */}
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: person.delay + 0.2, type: "spring" }}
+                      className={`absolute w-12 h-12 rounded-full ${
+                        person.highlight
+                          ? 'bg-primary/20 border-2 border-primary/70'
+                          : 'bg-muted border-2 border-border/60'
+                      } flex items-center justify-center shadow-md`}
+                      style={{
+                        left: `${x2}%`,
+                        top: `${y2}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    >
+                      <span className={`text-xs font-medium ${person.highlight ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {person.name}
+                      </span>
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+
+              {/* Degree Labels */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8 }}
+                className="absolute bottom-4 left-4 space-y-2 text-xs font-mono"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-primary"></div>
+                  <span className="text-muted-foreground">Highlighted Path</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-muted border-2 border-border"></div>
+                  <span className="text-muted-foreground">Other Connections</span>
+                </div>
+              </motion.div>
             </div>
-            <h3 className="text-xl font-medium mb-3">Connect</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Link your email and calendar. KNOW passively builds your relationship graph from real interactions.
-            </p>
           </motion.div>
 
-          {/* Step 2 */}
+          {/* Right: Chat Interface */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-col items-center text-center"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="space-y-6"
           >
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
-              <span className="text-2xl">💬</span>
-              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                2
-              </span>
+            {/* Chat Message */}
+            <div className="bg-background border border-border/40 rounded-lg p-4 shadow-sm">
+              <p className="text-sm text-muted-foreground mb-2">You</p>
+              <p className="text-lg">Who can intro me to Acme Ventures?</p>
             </div>
-            <h3 className="text-xl font-medium mb-3">Ask</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Chat naturally. "Who knows someone at Stripe?" Find warm intro paths 3-4 degrees away instantly.
-            </p>
-          </motion.div>
 
-          {/* Step 3 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col items-center text-center"
-          >
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
-              <span className="text-2xl">🎯</span>
-              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                3
-              </span>
+            {/* KNOW Response */}
+            <div className="bg-muted/30 border border-primary/20 rounded-lg p-5 shadow-sm space-y-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <p className="text-sm font-medium">KNOW</p>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">Found 1 warm intro path:</p>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-md text-sm font-medium">
+                    You
+                  </div>
+                  <div className="text-primary">→</div>
+                  <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-md text-sm font-medium">
+                    Sarah Chen
+                  </div>
+                  <div className="text-primary">→</div>
+                  <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-md text-sm font-medium">
+                    Julia Park
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-border/40 space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">Sarah Chen: Last spoke 3 weeks ago, strong connection</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">Julia Park: Partner at Acme Ventures</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">Sarah emailed Julia 4x last month</span>
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <button className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">
+                    Draft intro request
+                  </button>
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-medium mb-3">Connect</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Get intro drafts, relationship context, and suggestions. Never lose track of who matters.
-            </p>
           </motion.div>
         </div>
-
-        {/* Example Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="mt-16 bg-muted/30 border border-border/40 rounded-lg p-6 md:p-8"
-        >
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">👤</div>
-              <div className="flex-1">
-                <p className="font-medium text-sm text-muted-foreground mb-1">You ask:</p>
-                <p className="text-lg">"Who can intro me to Acme Ventures?"</p>
-              </div>
-            </div>
-
-            <div className="pl-11 border-l-2 border-primary/30 ml-4 py-3">
-              <p className="font-medium text-sm text-muted-foreground mb-2">KNOW finds:</p>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="px-2 py-1 bg-primary/10 rounded">You</span>
-                <span className="text-primary">→</span>
-                <span className="px-2 py-1 bg-primary/10 rounded">Sarah Chen</span>
-                <span className="text-primary">→</span>
-                <span className="px-2 py-1 bg-primary/10 rounded">Julia Park</span>
-              </div>
-              <p className="text-muted-foreground mt-3 text-sm">
-                Sarah emailed Julia 4x last month. Strong connection. High success rate.
-              </p>
-            </div>
-          </div>
-        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center text-muted-foreground font-light text-lg max-w-2xl mx-auto"
+          transition={{ delay: 0.9 }}
+          className="mt-16 text-center text-muted-foreground font-light text-lg max-w-2xl mx-auto"
         >
-          Know tells you who to talk to, why, and how — using your real relationships.
+          Every connection in your network. Every path mapped. Every relationship remembered.
         </motion.p>
       </motion.section>
 
