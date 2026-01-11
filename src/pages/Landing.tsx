@@ -17,6 +17,12 @@ const StatusDot = ({ status }: { status: string }) => (
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
     )}
+    {status === "building" && (
+      <span className="relative flex h-2 w-2">
+        <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+      </span>
+    )}
     <span>{status}</span>
   </div>
 );
@@ -49,25 +55,22 @@ const Typewriter = ({ text, onComplete, speed = 15 }: { text: string, onComplete
 
 const transcriptLines = [
   { text: "$ know", type: "command" },
-  { text: "know: running locally.", type: "output" },
-  { text: "[ DAY 1 ]", type: "marker" },
-  { text: "know: work began at 11:43pm.", type: "output" },
-  { text: "[ DAY 2 ]", type: "marker" },
-  { text: "know: same start time.", type: "output" },
-  { text: "[ DAY 4 ]", type: "marker" },
-  { text: "know: this is becoming a pattern.", type: "output" },
-  { text: "[ NO RESPONSE ]", type: "marker" },
-  { text: "[ DAY 6 ]", type: "marker" },
-  { text: "know: you work late before important deadlines.", type: "output" },
-  { text: "know: outcomes are still good.", type: "output" },
-  { text: "know: effort cost is rising.", type: "output" },
-  { text: "[ DAY 9 ]", type: "marker" },
-  { text: "know: next Friday matters.", type: "output" },
-  { text: "know: if nothing changes, you will start late again.", type: "output" },
-  { text: "[ DAY 9 — EARLIER THAT EVENING ]", type: "marker" },
-  { text: "know: reminding you now.", type: "output" },
-  { text: "[ YOU START EARLIER ]", type: "marker" },
-  { text: "know: noted.", type: "output", hasCursor: true },
+  { text: "Who should I talk to this week?", type: "output" },
+  { text: "[ SARAH CHEN ]", type: "marker" },
+  { text: "know: Last spoke 3 weeks ago. Co-founder at AI startup.", type: "output" },
+  { text: "know: You mentioned wanting an intro to her investors.", type: "output" },
+  { text: "[ MARCUS LEE ]", type: "marker" },
+  { text: "know: Met at conference. Works at OpenAI.", type: "output" },
+  { text: "know: You're drifting. Last contact: 2 months.", type: "output" },
+  { text: "$ Find me a warm intro to Acme Ventures", type: "command" },
+  { text: "[ PATH FOUND ]", type: "marker" },
+  { text: "know: You → Sarah Chen → Julia Park (Partner at Acme)", type: "output" },
+  { text: "know: Sarah emailed Julia 4x last month. Strong connection.", type: "output" },
+  { text: "$ Draft an intro ask to Sarah", type: "command" },
+  { text: "know: drafting...", type: "output" },
+  { text: "[ DRAFT READY ]", type: "marker" },
+  { text: "know: 'Hey Sarah, hope you're doing well. I'm exploring...'", type: "output" },
+  { text: "know: Click to view full message.", type: "output", hasCursor: true },
 ];
 
 export default function Landing() {
@@ -87,32 +90,32 @@ export default function Landing() {
       
       {/* Hero Section - Progressive Disclosure */}
       <section className="container mx-auto px-6 pt-32 pb-12 max-w-3xl min-h-[40vh] flex flex-col justify-center">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-4xl md:text-6xl font-light leading-[1.1] mb-8 tracking-tighter text-glow"
         >
-          Most things don't fail dramatically.<br />They fade.
+          Who should you talk to?<br />KNOW already knows.
         </motion.h1>
-        
+
         <div className="space-y-1">
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
             className="text-xl md:text-2xl text-muted-foreground font-light max-w-xl leading-relaxed tracking-tight"
           >
-            KNOW runs quietly on your machine.
+            Chat-first network intelligence.
           </motion.p>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.6 }}
             className="text-xl md:text-2xl text-muted-foreground font-light max-w-xl leading-relaxed tracking-tight"
           >
-            It notices what keeps slipping.
+            Built from your real relationships.
           </motion.p>
         </div>
       </section>
@@ -125,7 +128,7 @@ export default function Landing() {
         transition={{ duration: 0.5 }}
         className="container mx-auto px-6 pt-12 pb-24 max-w-3xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">A real session, over time</h2>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">A conversation with KNOW</h2>
         <div className="font-mono text-sm md:text-base space-y-6 text-foreground/90 pl-4 border-l border-border/20 min-h-[400px]">
           {transcriptLines.map((line, index) => {
             if (index > activeLineIndex) return null;
@@ -151,12 +154,12 @@ export default function Landing() {
             );
           })}
         </div>
-        <motion.p 
+        <motion.p
           className="mt-12 text-muted-foreground font-light text-lg md:text-xl max-w-2xl min-h-[3rem]"
         >
           {showFinalSentence && (
-             <Typewriter 
-               text="This is not a chatbot. It is a system that keeps paying attention when you don't."
+             <Typewriter
+               text="Know tells you who to talk to, why, and how, using your real relationships."
                speed={30}
              />
           )}
@@ -171,24 +174,24 @@ export default function Landing() {
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">State of the system</h2>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">How it works</h2>
         <div className="font-mono text-sm md:text-base w-full max-w-md bg-muted/30 p-6 rounded-sm border border-border/20">
           <div className="grid grid-cols-2 gap-y-4">
-            <span className="text-muted-foreground">Daemon</span>
-            <StatusDot status="running" />
-            
+            <span className="text-muted-foreground">Connect</span>
+            <span>Email + Calendar</span>
+
+            <span className="text-muted-foreground">Graph</span>
+            <StatusDot status="building" />
+
+            <span className="text-muted-foreground">Ask</span>
+            <span>Chat interface</span>
+
             <span className="text-muted-foreground">Memory</span>
-            <span>local only</span>
-            
-            <span className="text-muted-foreground">Interventions</span>
-            <span>rare</span>
-            
-            <span className="text-muted-foreground">Attention</span>
-            <span>conserved</span>
+            <span>Private, local</span>
           </div>
         </div>
         <p className="mt-8 text-muted-foreground font-light text-sm">
-          If this state feels wrong, you can stop everything instantly.
+          KNOW builds a relationship graph from your real interactions.
         </p>
       </motion.section>
 
@@ -200,7 +203,7 @@ export default function Landing() {
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">What KNOW refuses to do</h2>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">What KNOW doesn't do</h2>
         <ul className="space-y-3 font-light text-lg md:text-xl text-muted-foreground">
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
@@ -208,27 +211,23 @@ export default function Landing() {
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-            No daily goals
+            No CRM views
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-            No streaks
+            No manual contact management
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-            No motivational language
+            No social feed tracking
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-            No reminders unless invited
+            No analytics pages
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-            No syncing by default
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-            No acting on your behalf
+            No team features
           </li>
         </ul>
       </motion.section>
@@ -244,7 +243,7 @@ export default function Landing() {
         <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">Pricing</h2>
         <div className="space-y-2">
           <p className="text-4xl md:text-5xl font-light tracking-tight">$24 / month</p>
-          <p className="text-muted-foreground font-light text-lg">KNOW only works if it runs continuously and remembers.</p>
+          <p className="text-muted-foreground font-light text-lg">Your network graph stays current. Your relationships stay maintained.</p>
         </div>
       </motion.section>
 
