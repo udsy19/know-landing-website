@@ -91,6 +91,7 @@ export default function Landing() {
 
   const closeWaitlist = () => {
     if (waitlistStatus === "loading") return;
+    document.body.style.overflow = "";
     setIsWaitlistOpen(false);
     setTimeout(() => {
       setWaitlistStep(0);
@@ -1196,22 +1197,23 @@ export default function Landing() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="flex items-center justify-between p-6"
+              className="flex items-center justify-between p-4 md:p-6"
             >
-              <span className="text-sm font-mono text-muted-foreground">
+              <span className="text-xs md:text-sm font-mono text-muted-foreground">
                 {waitlistStatus === "success" ? "done" : `${waitlistStep + 1} / ${waitlistSteps.length}`}
               </span>
               <button
                 onClick={closeWaitlist}
                 disabled={waitlistStatus === "loading"}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
-                esc to close
+                <span className="hidden md:inline">esc to close</span>
+                <span className="md:hidden">close ×</span>
               </button>
             </motion.div>
 
             {/* Content */}
-            <div className="flex-1 flex items-center justify-center px-6">
+            <div className="flex-1 flex items-center justify-center px-4 md:px-6">
               <div className="w-full max-w-xl">
                 <AnimatePresence mode="wait">
                   {waitlistStatus === "success" ? (
@@ -1236,7 +1238,7 @@ export default function Landing() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-3xl md:text-4xl font-light mb-4"
+                        className="text-2xl md:text-4xl font-light mb-4"
                       >
                         You're in, {waitlistForm.name.split(' ')[0]}
                       </motion.h2>
@@ -1244,7 +1246,7 @@ export default function Landing() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="text-muted-foreground text-lg"
+                        className="text-muted-foreground text-base md:text-lg"
                       >
                         We'll reach out soon with early access.
                       </motion.p>
@@ -1253,9 +1255,10 @@ export default function Landing() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
                         onClick={closeWaitlist}
-                        className="mt-12 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        className="mt-8 md:mt-12 text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        press esc or click to close
+                        <span className="hidden md:inline">press esc or click to close</span>
+                        <span className="md:hidden">tap to close</span>
                       </motion.button>
                     </motion.div>
                   ) : (
@@ -1267,7 +1270,7 @@ export default function Landing() {
                       transition={{ duration: 0.3 }}
                     >
                       <motion.h2
-                        className="text-3xl md:text-5xl font-light mb-8"
+                        className="text-2xl md:text-5xl font-light mb-6 md:mb-8"
                       >
                         {waitlistSteps[waitlistStep].label}
                       </motion.h2>
@@ -1285,7 +1288,7 @@ export default function Landing() {
                           placeholder={waitlistSteps[waitlistStep].placeholder}
                           disabled={waitlistStatus === "loading"}
                           rows={3}
-                          className="w-full text-2xl md:text-3xl font-light bg-transparent border-none outline-none placeholder:text-muted-foreground/40 resize-none"
+                          className="w-full text-xl md:text-3xl font-light bg-transparent border-none outline-none placeholder:text-muted-foreground/40 resize-none"
                         />
                       ) : (
                         <input
@@ -1296,18 +1299,18 @@ export default function Landing() {
                           onKeyDown={handleWaitlistKeyDown}
                           placeholder={waitlistSteps[waitlistStep].placeholder}
                           disabled={waitlistStatus === "loading"}
-                          className="w-full text-2xl md:text-3xl font-light bg-transparent border-none outline-none placeholder:text-muted-foreground/40"
+                          className="w-full text-xl md:text-3xl font-light bg-transparent border-none outline-none placeholder:text-muted-foreground/40"
                         />
                       )}
 
-                      <div className="mt-8 flex items-center gap-4">
+                      <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4">
                         <motion.button
                           type="button"
                           onClick={handleWaitlistNext}
                           disabled={waitlistStatus === "loading"}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="px-8 py-3 bg-foreground text-background rounded-full font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+                          className="px-6 md:px-8 py-3 bg-foreground text-background rounded-full font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
                         >
                           {waitlistStatus === "loading" ? (
                             <>
