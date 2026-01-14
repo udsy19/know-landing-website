@@ -184,3 +184,77 @@
     opacity: 0.2;
   }
 }
+
+@keyframes shimmer-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.shimmer-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-button::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 60deg,
+    hsl(var(--primary) / 0.6) 90deg,
+    hsl(var(--primary) / 0.8) 120deg,
+    hsl(var(--primary) / 0.6) 150deg,
+    transparent 180deg,
+    transparent 360deg
+  );
+  border-radius: 9999px;
+  animation: shimmer-rotate 3s linear infinite;
+}
+
+.shimmer-button::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: var(--background);
+  border-radius: 9999px;
+}
+
+/* Dark shimmer button with black border and white traveling light */
+.shimmer-button-dark {
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+  border: 2px solid hsl(var(--foreground));
+}
+
+.shimmer-button-dark::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 70deg,
+    rgba(255, 255, 255, 0.8) 85deg,
+    rgba(255, 255, 255, 1) 90deg,
+    rgba(255, 255, 255, 0.8) 95deg,
+    transparent 110deg,
+    transparent 360deg
+  );
+  border-radius: 9999px;
+  animation: shimmer-rotate 2s linear infinite;
+}
+
+.shimmer-button-dark::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: var(--background);
+  border-radius: 9999px;
+}
