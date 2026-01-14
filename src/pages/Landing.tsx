@@ -68,11 +68,25 @@ export default function Landing() {
   const handleWaitlistSubmit = async () => {
     setWaitlistStatus("loading");
 
+    // Collect browser fingerprint data
+    const urlParams = new URLSearchParams(window.location.search);
+    const fingerprint = {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      platform: navigator.platform,
+      screenResolution: `${window.screen.width}x${window.screen.height}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      referrer: document.referrer || "direct",
+      utmSource: urlParams.get("utm_source") || "",
+      utmMedium: urlParams.get("utm_medium") || "",
+      utmCampaign: urlParams.get("utm_campaign") || "",
+    };
+
     try {
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(waitlistForm),
+        body: JSON.stringify({ ...waitlistForm, ...fingerprint }),
       });
 
       const data = await response.json();

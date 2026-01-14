@@ -14,6 +14,7 @@ const ALLOWED_ORIGINS = [
   "https://www.useknow.io",
   "https://know-silk.vercel.app",
   "http://localhost:5173",
+  "http://localhost:5175",
   "http://localhost:3000",
 ];
 
@@ -23,6 +24,16 @@ interface WaitlistEntry {
   company: string;
   linkedin?: string;
   reason: string;
+  // Browser fingerprint data
+  userAgent?: string;
+  language?: string;
+  platform?: string;
+  screenResolution?: string;
+  timezone?: string;
+  referrer?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
 }
 
 // Sanitize string input to prevent injection attacks
@@ -69,7 +80,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Invalid request body" });
     }
 
-    const { email, name, company, linkedin, reason } = req.body as WaitlistEntry;
+    const {
+      email,
+      name,
+      company,
+      linkedin,
+      reason,
+      userAgent,
+      language,
+      platform,
+      screenResolution,
+      timezone,
+      referrer,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+    } = req.body as WaitlistEntry;
 
     // Validate and sanitize required fields
     const sanitizedEmail = sanitizeString(email, 254).toLowerCase();
@@ -77,6 +103,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const sanitizedCompany = sanitizeString(company, 200);
     const sanitizedLinkedin = linkedin ? sanitizeString(linkedin, 200) : undefined;
     const sanitizedReason = sanitizeString(reason, 1000);
+
+    // Sanitize fingerprint data
+    const sanitizedUserAgent = sanitizeString(userAgent || "", 500);
+    const sanitizedLanguage = sanitizeString(language || "", 20);
+    const sanitizedPlatform = sanitizeString(platform || "", 50);
+    const sanitizedScreenResolution = sanitizeString(screenResolution || "", 20);
+    const sanitizedTimezone = sanitizeString(timezone || "", 50);
+    const sanitizedReferrer = sanitizeString(referrer || "", 500);
+    const sanitizedUtmSource = sanitizeString(utmSource || "", 100);
+    const sanitizedUtmMedium = sanitizeString(utmMedium || "", 100);
+    const sanitizedUtmCampaign = sanitizeString(utmCampaign || "", 100);
 
     if (!sanitizedEmail || !isValidEmail(sanitizedEmail)) {
       return res.status(400).json({ error: "Valid email is required" });
@@ -100,15 +137,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: "Service not configured" });
     }
 
+    // Get IP address from request headers
+    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
+      || req.headers["x-real-ip"] as string
+      || "unknown";
+
     const entry: WaitlistEntry = {
       email: sanitizedEmail,
       name: sanitizedName,
       company: sanitizedCompany,
       linkedin: sanitizedLinkedin,
       reason: sanitizedReason,
+      userAgent: sanitizedUserAgent,
+      language: sanitizedLanguage,
+      platform: sanitizedPlatform,
+      screenResolution: sanitizedScreenResolution,
+      timezone: sanitizedTimezone,
+      referrer: sanitizedReferrer,
+      utmSource: sanitizedUtmSource,
+      utmMedium: sanitizedUtmMedium,
+      utmCampaign: sanitizedUtmCampaign,
     };
 
-    await storeInNotion(entry);
+    await storeInNotion(entry, ip);
 
     return res.status(200).json({
       success: true,
@@ -125,7 +176,7 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-async function storeInNotion(entry: WaitlistEntry) {
+async function storeInNotion(entry: WaitlistEntry, ip: string) {
   const timestamp = new Date().toISOString();
 
   await notion.pages.create({
@@ -148,6 +199,37 @@ async function storeInNotion(entry: WaitlistEntry) {
       },
       "Sign Up": {
         date: { start: timestamp },
+      },
+      // Fingerprint columns - add these to your Notion database
+      "User Agent": {
+        rich_text: [{ text: { content: entry.userAgent || "" } }],
+      },
+      "Language": {
+        rich_text: [{ text: { content: entry.language || "" } }],
+      },
+      "Platform": {
+        rich_text: [{ text: { content: entry.platform || "" } }],
+      },
+      "Screen": {
+        rich_text: [{ text: { content: entry.screenResolution || "" } }],
+      },
+      "Timezone": {
+        rich_text: [{ text: { content: entry.timezone || "" } }],
+      },
+      "Referrer": {
+        rich_text: [{ text: { content: entry.referrer || "" } }],
+      },
+      "UTM Source": {
+        rich_text: [{ text: { content: entry.utmSource || "" } }],
+      },
+      "UTM Medium": {
+        rich_text: [{ text: { content: entry.utmMedium || "" } }],
+      },
+      "UTM Campaign": {
+        rich_text: [{ text: { content: entry.utmCampaign || "" } }],
+      },
+      "IP Address": {
+        rich_text: [{ text: { content: ip } }],
       },
     },
   });
