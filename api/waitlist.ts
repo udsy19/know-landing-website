@@ -2,12 +2,12 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { sql } from "@vercel/postgres";
 import { Client } from "@notionhq/client";
 
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-});
+// Initialize Notion client (optional - will skip if not configured)
+const notion = process.env.NOTION_API_KEY
+  ? new Client({ auth: process.env.NOTION_API_KEY })
+  : null;
 
-const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID!;
+const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
 interface WaitlistEntry {
   email: string;
@@ -59,27 +59,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const timestamp = new Date().toISOString();
 
-    // Store in both places concurrently
-    const results = await Promise.allSettled([
-      storeInPostgres(entry, timestamp),
-      storeInNotion(entry, timestamp),
-    ]);
+    // Store in Postgres (required) and Notion (optional)
+    const tasks: Promise<void>[] = [storeInPostgres(entry, timestamp)];
 
-    // Check results
+    // Only add Notion if configured
+    if (notion && NOTION_DATABASE_ID) {
+      tasks.push(storeInNotion(entry, timestamp));
+    }
+
+    const results = await Promise.allSettled(tasks);
+
+    // Check Postgres result (required)
     const postgresResult = results[0];
-    const notionResult = results[1];
-
-    // Log any errors
     if (postgresResult.status === "rejected") {
       console.error("Postgres error:", postgresResult.reason);
-    }
-    if (notionResult.status === "rejected") {
-      console.error("Notion error:", notionResult.reason);
+      return res.status(500).json({ error: "Failed to save your submission. Please try again." });
     }
 
-    // If both failed, return error
-    if (postgresResult.status === "rejected" && notionResult.status === "rejected") {
-      return res.status(500).json({ error: "Failed to save your submission. Please try again." });
+    // Log Notion error if it failed (but don't fail the request)
+    if (results[1]?.status === "rejected") {
+      console.error("Notion error (non-fatal):", (results[1] as PromiseRejectedResult).reason);
     }
 
     return res.status(200).json({
@@ -124,6 +123,10 @@ async function storeInPostgres(entry: WaitlistEntry, timestamp: string) {
 }
 
 async function storeInNotion(entry: WaitlistEntry, timestamp: string) {
+  if (!notion || !NOTION_DATABASE_ID) {
+    throw new Error("Notion not configured");
+  }
+
   await notion.pages.create({
     parent: { database_id: NOTION_DATABASE_ID },
     properties: {
