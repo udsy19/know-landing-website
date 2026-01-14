@@ -26,6 +26,19 @@ export default function Landing() {
   });
   const [waitlistStatus, setWaitlistStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [waitlistMessage, setWaitlistMessage] = useState("");
+  const [waitlistCount, setWaitlistCount] = useState(2847);
+
+  // Fetch waitlist count on mount
+  useEffect(() => {
+    fetch("/api/waitlist-count")
+      .then(res => res.json())
+      .then(data => {
+        if (data.count) setWaitlistCount(data.count);
+      })
+      .catch(() => {
+        // Keep default count on error
+      });
+  }, []);
 
   const waitlistSteps = [
     { field: "name", label: "What's your name?", placeholder: "Jane Smith", type: "text", required: true },
@@ -1205,7 +1218,7 @@ export default function Landing() {
                 <div className="flex items-center justify-center gap-2 mb-6">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                   <span className="text-sm text-muted-foreground">
-                    <span className="text-foreground font-medium">2,847</span> people waiting
+                    <span className="text-foreground font-medium">{waitlistCount.toLocaleString()}</span> people waiting
                   </span>
                 </div>
 
