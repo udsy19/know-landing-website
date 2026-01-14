@@ -8,6 +8,15 @@ const notion = new Client({
 
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID!;
 
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  "https://useknow.io",
+  "https://www.useknow.io",
+  "https://know-silk.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
 interface WaitlistEntry {
   email: string;
   name: string;
@@ -16,11 +25,35 @@ interface WaitlistEntry {
   reason: string;
 }
 
+// Sanitize string input to prevent injection attacks
+function sanitizeString(input: string, maxLength: number = 500): string {
+  if (typeof input !== "string") return "";
+  return input
+    .trim()
+    .slice(0, maxLength)
+    .replace(/[<>]/g, ""); // Remove potential HTML tags
+}
+
+// Validate LinkedIn URL format
+function isValidLinkedInUrl(url: string): boolean {
+  if (!url) return true; // Optional field
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === "linkedin.com" || parsed.hostname === "www.linkedin.com";
+  } catch {
+    return false;
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // CORS headers with origin validation
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Max-Age", "86400"); // Cache preflight for 24 hours
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -31,20 +64,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    // Ensure request body exists and is valid JSON
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
     const { email, name, company, linkedin, reason } = req.body as WaitlistEntry;
 
-    // Validate required fields
-    if (!email || !isValidEmail(email)) {
+    // Validate and sanitize required fields
+    const sanitizedEmail = sanitizeString(email, 254).toLowerCase();
+    const sanitizedName = sanitizeString(name, 100);
+    const sanitizedCompany = sanitizeString(company, 200);
+    const sanitizedLinkedin = linkedin ? sanitizeString(linkedin, 200) : undefined;
+    const sanitizedReason = sanitizeString(reason, 1000);
+
+    if (!sanitizedEmail || !isValidEmail(sanitizedEmail)) {
       return res.status(400).json({ error: "Valid email is required" });
     }
-    if (!name || name.trim().length < 2) {
+    if (!sanitizedName || sanitizedName.length < 2) {
       return res.status(400).json({ error: "Name is required" });
     }
-    if (!company || company.trim().length < 1) {
+    if (!sanitizedCompany || sanitizedCompany.length < 1) {
       return res.status(400).json({ error: "Company is required" });
     }
-    if (!reason || reason.trim().length < 10) {
+    if (!sanitizedReason || sanitizedReason.length < 10) {
       return res.status(400).json({ error: "Please tell us why you want to try [know]" });
+    }
+    if (sanitizedLinkedin && !isValidLinkedInUrl(sanitizedLinkedin)) {
+      return res.status(400).json({ error: "Please provide a valid LinkedIn URL" });
     }
 
     // Check if Notion is configured
@@ -54,11 +101,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const entry: WaitlistEntry = {
-      email: email.toLowerCase().trim(),
-      name: name.trim(),
-      company: company.trim(),
-      linkedin: linkedin?.trim() || undefined,
-      reason: reason.trim(),
+      email: sanitizedEmail,
+      name: sanitizedName,
+      company: sanitizedCompany,
+      linkedin: sanitizedLinkedin,
+      reason: sanitizedReason,
     };
 
     await storeInNotion(entry);

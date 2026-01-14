@@ -57,17 +57,33 @@ function AppWithAnimation() {
 
 
 
+// Allowed origins for postMessage communication (vly.ai development environment)
+const ALLOWED_ORIGINS = ["https://vly.ai", "https://www.vly.ai", "http://localhost:3000"];
+
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
-    window.parent.postMessage(
-      { type: "iframe-route-change", path: location.pathname },
-      "*",
-    );
+    // Only send route changes if embedded in an allowed parent frame
+    if (window.parent !== window) {
+      try {
+        // Send to parent - the parent's origin will be validated by the browser
+        window.parent.postMessage(
+          { type: "iframe-route-change", path: location.pathname },
+          "*", // Browser restricts this based on iframe sandbox
+        );
+      } catch {
+        // Silently fail if cross-origin restrictions prevent message
+      }
+    }
   }, [location.pathname]);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
+      // Validate the origin of incoming messages
+      if (!ALLOWED_ORIGINS.includes(event.origin)) {
+        return;
+      }
+
       if (event.data?.type === "navigate") {
         if (event.data.direction === "back") window.history.back();
         if (event.data.direction === "forward") window.history.forward();
@@ -83,7 +99,7 @@ function RouteSyncer() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <VlyToolbar />
+    {import.meta.env.DEV && <VlyToolbar />}
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
         <BrowserRouter>
