@@ -136,9 +136,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!sanitizedReason || sanitizedReason.length < 10) {
       return res.status(400).json({ error: "Please write a bit more (at least 10 characters)" });
     }
-    if (sanitizedLinkedin && !isValidLinkedInUrl(sanitizedLinkedin)) {
-      return res.status(400).json({ error: "Please provide a valid LinkedIn URL" });
-    }
+    // LinkedIn is optional - if invalid, just ignore it instead of erroring
+    const finalLinkedin = sanitizedLinkedin && isValidLinkedInUrl(sanitizedLinkedin)
+      ? sanitizedLinkedin
+      : undefined;
 
     // Check if Notion is configured
     if (!process.env.NOTION_API_KEY || !NOTION_DATABASE_ID) {
@@ -155,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       email: sanitizedEmail,
       name: sanitizedName,
       company: sanitizedCompany,
-      linkedin: sanitizedLinkedin,
+      linkedin: finalLinkedin,
       reason: sanitizedReason,
       userAgent: sanitizedUserAgent,
       language: sanitizedLanguage,

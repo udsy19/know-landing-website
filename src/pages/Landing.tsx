@@ -223,7 +223,7 @@ export default function Landing() {
           Know anyone,<br />before you meet them.
         </motion.h1>
 
-        <div className="space-y-2">
+        <div className="space-y-2 mb-10">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -242,6 +242,33 @@ export default function Landing() {
             And runs deep research on them before you reach out.
           </motion.p>
         </div>
+
+        {/* Hero CTA */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.8 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+        >
+          <motion.button
+            onClick={() => {
+              setIsWaitlistOpen(true);
+              // Scroll to waitlist section
+              document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+          >
+            Join Waitlist
+          </motion.button>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="text-sm text-muted-foreground">
+              <span className="text-foreground font-medium">{waitlistCount.toLocaleString()}</span> people waiting
+            </span>
+          </div>
+        </motion.div>
       </section>
 
       {/* Feature 1: Network Search */}
@@ -1176,6 +1203,7 @@ export default function Landing() {
 
       {/* Waitlist CTA - Inline Expansion */}
       <motion.section
+        id="waitlist-section"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -100px 0px" }}
@@ -1408,33 +1436,49 @@ export default function Landing() {
                         ← Back
                       </button>
 
-                      <motion.button
-                        onClick={handleWaitlistNext}
-                        disabled={waitlistStatus === "loading"}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
-                      >
-                        {waitlistStatus === "loading" ? (
-                          <>
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                              className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                            />
-                            Joining...
-                          </>
-                        ) : waitlistStep === waitlistSteps.length - 1 ? (
-                          "Join Waitlist"
-                        ) : (
-                          <>
-                            Next
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </>
+                      <div className="flex items-center gap-3">
+                        {/* Skip button for optional fields */}
+                        {!waitlistSteps[waitlistStep].required && (
+                          <button
+                            onClick={() => {
+                              updateWaitlistForm(waitlistSteps[waitlistStep].field, "");
+                              setWaitlistStep(prev => prev + 1);
+                            }}
+                            disabled={waitlistStatus === "loading"}
+                            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            Skip
+                          </button>
                         )}
-                      </motion.button>
+
+                        <motion.button
+                          onClick={handleWaitlistNext}
+                          disabled={waitlistStatus === "loading"}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+                        >
+                          {waitlistStatus === "loading" ? (
+                            <>
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                              />
+                              Joining...
+                            </>
+                          ) : waitlistStep === waitlistSteps.length - 1 ? (
+                            "Join Waitlist"
+                          ) : (
+                            <>
+                              Next
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </>
+                          )}
+                        </motion.button>
+                      </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
