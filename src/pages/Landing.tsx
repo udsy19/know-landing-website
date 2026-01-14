@@ -13,7 +13,8 @@ export default function Landing() {
   const demoSectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(demoSectionRef, { once: false, amount: 0.5 });
 
-  // Waitlist form state
+  // Waitlist modal state
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [waitlistForm, setWaitlistForm] = useState({
     name: "",
     email: "",
@@ -1092,132 +1093,245 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* Waitlist */}
+      {/* Waitlist CTA */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.6 }}
-        className="container mx-auto px-6 py-32 max-w-xl border-t border-border/40 mb-12"
+        className="container mx-auto px-6 py-32 max-w-3xl border-t border-border/40 mb-12"
       >
-        <div className="text-center mb-10">
+        <div className="text-center">
           <h2 className="text-3xl md:text-5xl font-light mb-6">Join the waitlist</h2>
-          <p className="text-muted-foreground text-lg">Be first to unlock your network's full potential.</p>
-        </div>
-
-        {waitlistStatus === "success" ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center gap-3 py-12"
+          <p className="text-muted-foreground text-lg mb-10">Be first to unlock your network's full potential.</p>
+          <motion.button
+            onClick={() => setIsWaitlistOpen(true)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="px-12 py-4 bg-primary text-primary-foreground rounded-full font-medium text-lg hover:opacity-90 transition-opacity"
           >
-            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
-              <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <span className="text-xl font-medium">{waitlistMessage}</span>
-            <p className="text-muted-foreground text-sm">We'll be in touch soon.</p>
-          </motion.div>
-        ) : (
-          <form onSubmit={handleWaitlistSubmit} className="space-y-4">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5 text-left">Name *</label>
-                <input
-                  type="text"
-                  value={waitlistForm.name}
-                  onChange={(e) => updateWaitlistForm("name", e.target.value)}
-                  placeholder="Jane Smith"
-                  disabled={waitlistStatus === "loading"}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5 text-left">Email *</label>
-                <input
-                  type="email"
-                  value={waitlistForm.email}
-                  onChange={(e) => updateWaitlistForm("email", e.target.value)}
-                  placeholder="jane@company.com"
-                  disabled={waitlistStatus === "loading"}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5 text-left">Company *</label>
-                <input
-                  type="text"
-                  value={waitlistForm.company}
-                  onChange={(e) => updateWaitlistForm("company", e.target.value)}
-                  placeholder="Acme Inc"
-                  disabled={waitlistStatus === "loading"}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5 text-left">LinkedIn <span className="text-muted-foreground font-normal">(optional)</span></label>
-                <input
-                  type="url"
-                  value={waitlistForm.linkedin}
-                  onChange={(e) => updateWaitlistForm("linkedin", e.target.value)}
-                  placeholder="linkedin.com/in/janesmith"
-                  disabled={waitlistStatus === "loading"}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1.5 text-left">Why do you want to try [know]? *</label>
-              <textarea
-                value={waitlistForm.reason}
-                onChange={(e) => updateWaitlistForm("reason", e.target.value)}
-                placeholder="I'm looking for a better way to..."
-                disabled={waitlistStatus === "loading"}
-                rows={3}
-                className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 resize-none"
-                required
-              />
-            </div>
-
-            {waitlistStatus === "error" && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-red-500 text-left"
-              >
-                {waitlistMessage}
-              </motion.p>
-            )}
-
-            <button
-              type="submit"
-              disabled={waitlistStatus === "loading"}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {waitlistStatus === "loading" ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full"
-                  />
-                  Submitting...
-                </>
-              ) : (
-                "Join Waitlist"
-              )}
-            </button>
-          </form>
-        )}
+            Get Early Access
+          </motion.button>
+        </div>
       </motion.section>
+
+      {/* Waitlist Modal */}
+      <AnimatePresence>
+        {isWaitlistOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => waitlistStatus !== "loading" && setIsWaitlistOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, y: 100, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 100, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed inset-x-4 bottom-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg bg-background rounded-2xl shadow-2xl z-50 overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-border/50">
+                <div>
+                  <h3 className="text-xl font-medium">Join the Waitlist</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Get early access to [know]</p>
+                </div>
+                <button
+                  onClick={() => waitlistStatus !== "loading" && setIsWaitlistOpen(false)}
+                  className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6 max-h-[70vh] overflow-y-auto">
+                <AnimatePresence mode="wait">
+                  {waitlistStatus === "success" ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="flex flex-col items-center justify-center py-8"
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", damping: 15, stiffness: 300, delay: 0.1 }}
+                        className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-4"
+                      >
+                        <motion.svg
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{ duration: 0.5, delay: 0.2 }}
+                          className="w-10 h-10 text-emerald-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <motion.path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </motion.svg>
+                      </motion.div>
+                      <motion.h4
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="text-xl font-medium mb-2"
+                      >
+                        You're on the list!
+                      </motion.h4>
+                      <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="text-muted-foreground text-center"
+                      >
+                        We'll be in touch soon with early access.
+                      </motion.p>
+                      <motion.button
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        onClick={() => {
+                          setIsWaitlistOpen(false);
+                          setTimeout(() => setWaitlistStatus("idle"), 300);
+                        }}
+                        className="mt-6 px-6 py-2 bg-muted rounded-lg text-sm font-medium hover:bg-muted/80 transition-colors"
+                      >
+                        Done
+                      </motion.button>
+                    </motion.div>
+                  ) : (
+                    <motion.form
+                      key="form"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onSubmit={handleWaitlistSubmit}
+                      className="space-y-4"
+                    >
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-1.5">Name *</label>
+                          <input
+                            type="text"
+                            value={waitlistForm.name}
+                            onChange={(e) => updateWaitlistForm("name", e.target.value)}
+                            placeholder="Jane Smith"
+                            disabled={waitlistStatus === "loading"}
+                            className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-all"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1.5">Email *</label>
+                          <input
+                            type="email"
+                            value={waitlistForm.email}
+                            onChange={(e) => updateWaitlistForm("email", e.target.value)}
+                            placeholder="jane@company.com"
+                            disabled={waitlistStatus === "loading"}
+                            className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-all"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-1.5">Company *</label>
+                          <input
+                            type="text"
+                            value={waitlistForm.company}
+                            onChange={(e) => updateWaitlistForm("company", e.target.value)}
+                            placeholder="Acme Inc"
+                            disabled={waitlistStatus === "loading"}
+                            className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-all"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1.5">
+                            LinkedIn <span className="text-muted-foreground font-normal text-xs">(optional)</span>
+                          </label>
+                          <input
+                            type="url"
+                            value={waitlistForm.linkedin}
+                            onChange={(e) => updateWaitlistForm("linkedin", e.target.value)}
+                            placeholder="linkedin.com/in/jane"
+                            disabled={waitlistStatus === "loading"}
+                            className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-all"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Why do you want to try [know]? *</label>
+                        <textarea
+                          value={waitlistForm.reason}
+                          onChange={(e) => updateWaitlistForm("reason", e.target.value)}
+                          placeholder="I'm looking for a better way to..."
+                          disabled={waitlistStatus === "loading"}
+                          rows={3}
+                          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 resize-none transition-all"
+                          required
+                        />
+                      </div>
+
+                      <AnimatePresence>
+                        {waitlistStatus === "error" && (
+                          <motion.p
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="text-sm text-red-500"
+                          >
+                            {waitlistMessage}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+
+                      <button
+                        type="submit"
+                        disabled={waitlistStatus === "loading"}
+                        className="w-full py-3.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {waitlistStatus === "loading" ? (
+                          <>
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full"
+                            />
+                            Joining...
+                          </>
+                        ) : (
+                          "Join Waitlist"
+                        )}
+                      </button>
+                    </motion.form>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>
   );
