@@ -109,6 +109,18 @@ export default function Landing() {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isWaitlistOpen, waitlistStatus]);
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isWaitlistOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isWaitlistOpen]);
+
   const searchQuery = "david sequoia capital";
 
   // Connection paths data - showing the algorithm's evaluation
@@ -1175,7 +1187,8 @@ export default function Landing() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-background z-50 flex flex-col"
+            className="fixed inset-0 bg-background z-50 flex flex-col overflow-hidden"
+            onClick={(e) => e.target === e.currentTarget && closeWaitlist()}
           >
             {/* Header */}
             <motion.div
