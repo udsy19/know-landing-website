@@ -4,7 +4,7 @@ import { InstrumentationProvider } from "@/instrumentation.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { Analytics } from "@vercel/analytics/react";
-import { StrictMode, useEffect, lazy, Suspense, useState, useCallback } from "react";
+import { StrictMode, useEffect, lazy, Suspense, useState, useCallback, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
@@ -25,7 +25,17 @@ function RouteLoading() {
   );
 }
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+// Only initialize Convex if URL is provided
+const convexUrl = import.meta.env.VITE_CONVEX_URL;
+const convex = convexUrl ? new ConvexReactClient(convexUrl) : null;
+
+// Wrapper that conditionally provides Convex context
+function ConvexWrapper({ children }: { children: ReactNode }) {
+  if (convex) {
+    return <ConvexAuthProvider client={convex}>{children}</ConvexAuthProvider>;
+  }
+  return <>{children}</>;
+}
 
 // Check if this is the first visit in this session
 const hasSeenAnimation = sessionStorage.getItem("know-intro-seen") === "true";
@@ -102,13 +112,13 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {import.meta.env.DEV && <VlyToolbar />}
     <InstrumentationProvider>
-      <ConvexAuthProvider client={convex}>
+      <ConvexWrapper>
         <BrowserRouter>
           <RouteSyncer />
           <AppWithAnimation />
         </BrowserRouter>
         <Toaster />
-      </ConvexAuthProvider>
+      </ConvexWrapper>
     </InstrumentationProvider>
     <Analytics />
   </StrictMode>,
