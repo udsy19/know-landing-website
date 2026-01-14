@@ -49,7 +49,12 @@ function sanitizeString(input: string, maxLength: number = 500): string {
 function isValidLinkedInUrl(url: string): boolean {
   if (!url) return true; // Optional field
   try {
-    const parsed = new URL(url);
+    // Auto-prepend https:// if no protocol is provided
+    let normalizedUrl = url.trim();
+    if (!normalizedUrl.startsWith("http://") && !normalizedUrl.startsWith("https://")) {
+      normalizedUrl = "https://" + normalizedUrl;
+    }
+    const parsed = new URL(normalizedUrl);
     return parsed.hostname === "linkedin.com" || parsed.hostname === "www.linkedin.com";
   } catch {
     return false;
@@ -101,7 +106,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const sanitizedEmail = sanitizeString(email, 254).toLowerCase();
     const sanitizedName = sanitizeString(name, 100);
     const sanitizedCompany = sanitizeString(company, 200);
-    const sanitizedLinkedin = linkedin ? sanitizeString(linkedin, 200) : undefined;
+    // Normalize LinkedIn URL - add https:// if missing
+    let sanitizedLinkedin = linkedin ? sanitizeString(linkedin, 200) : undefined;
+    if (sanitizedLinkedin && !sanitizedLinkedin.startsWith("http://") && !sanitizedLinkedin.startsWith("https://")) {
+      sanitizedLinkedin = "https://" + sanitizedLinkedin;
+    }
     const sanitizedReason = sanitizeString(reason, 1000);
 
     // Sanitize fingerprint data
