@@ -131,7 +131,7 @@ async function storeInNotion(entry: WaitlistEntry, timestamp: string) {
         title: [{ text: { content: entry.name } }],
       },
       Email: {
-        email: entry.email,
+        rich_text: [{ text: { content: entry.email } }],
       },
       Company: {
         rich_text: [{ text: { content: entry.company } }],
@@ -142,11 +142,11 @@ async function storeInNotion(entry: WaitlistEntry, timestamp: string) {
       Reason: {
         rich_text: [{ text: { content: entry.reason } }],
       },
-      "Signed Up": {
+      "Sign Up": {
         date: { start: timestamp },
       },
-      Status: {
-        select: { name: "New" },
+      "Work Status": {
+        status: { name: "Not started" },
       },
     },
   });
