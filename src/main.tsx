@@ -4,6 +4,7 @@ import { InstrumentationProvider } from "@/instrumentation.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { StrictMode, useEffect, lazy, Suspense, useState, useCallback, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
@@ -125,5 +126,6 @@ createRoot(document.getElementById("root")!).render(
       </ConvexWrapper>
     </InstrumentationProvider>
     <Analytics />
+    <SpeedInsights />
   </StrictMode>,
 );
