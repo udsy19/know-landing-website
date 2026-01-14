@@ -124,8 +124,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!sanitizedCompany || sanitizedCompany.length < 1) {
       return res.status(400).json({ error: "Company is required" });
     }
-    if (!sanitizedReason || sanitizedReason.length < 3) {
-      return res.status(400).json({ error: "Please tell us why you want to try [know]" });
+    if (!sanitizedReason || sanitizedReason.length < 10) {
+      return res.status(400).json({ error: "Please write a bit more (at least 10 characters)" });
     }
     if (sanitizedLinkedin && !isValidLinkedInUrl(sanitizedLinkedin)) {
       return res.status(400).json({ error: "Please provide a valid LinkedIn URL" });
