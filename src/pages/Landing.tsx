@@ -27,10 +27,11 @@ export default function Landing() {
   const [waitlistMessage, setWaitlistMessage] = useState("");
 
   const waitlistSteps = [
-    { field: "name", label: "What's your name?", placeholder: "Jane Smith", type: "text" },
-    { field: "email", label: "What's your email?", placeholder: "jane@company.com", type: "email" },
-    { field: "company", label: "Where do you work?", placeholder: "Acme Inc", type: "text" },
-    { field: "reason", label: "Why do you want to try [know]?", placeholder: "I want to...", type: "textarea" },
+    { field: "name", label: "What's your name?", placeholder: "Jane Smith", type: "text", required: true },
+    { field: "email", label: "What's your email?", placeholder: "jane@company.com", type: "email", required: true },
+    { field: "company", label: "Where do you work?", placeholder: "Acme Inc", type: "text", required: true },
+    { field: "linkedin", label: "Your LinkedIn?", placeholder: "linkedin.com/in/yourname", type: "text", required: false },
+    { field: "reason", label: "Why do you want to try [know]?", placeholder: "I want to...", type: "textarea", required: true },
   ];
 
   const updateWaitlistForm = (field: string, value: string) => {
@@ -39,10 +40,10 @@ export default function Landing() {
   };
 
   const handleWaitlistNext = () => {
-    const currentField = waitlistSteps[waitlistStep].field;
-    const value = waitlistForm[currentField as keyof typeof waitlistForm];
+    const currentStep = waitlistSteps[waitlistStep];
+    const value = waitlistForm[currentStep.field as keyof typeof waitlistForm];
 
-    if (!value.trim()) {
+    if (currentStep.required && !value.trim()) {
       setWaitlistStatus("error");
       setWaitlistMessage("Please fill this in");
       return;
@@ -1330,7 +1331,11 @@ export default function Landing() {
                         </motion.button>
 
                         <span className="text-sm text-muted-foreground">
-                          {waitlistSteps[waitlistStep].type === "textarea" ? "⌘ + Enter" : "or press Enter ↵"}
+                          {waitlistSteps[waitlistStep].type === "textarea"
+                            ? "⌘ + Enter"
+                            : !waitlistSteps[waitlistStep].required
+                              ? "optional · press Enter to skip"
+                              : "or press Enter ↵"}
                         </span>
                       </div>
 
