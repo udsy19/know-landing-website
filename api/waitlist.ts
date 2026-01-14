@@ -179,58 +179,53 @@ function isValidEmail(email: string): boolean {
 async function storeInNotion(entry: WaitlistEntry, ip: string) {
   const timestamp = new Date().toISOString();
 
-  await notion.pages.create({
-    parent: { database_id: NOTION_DATABASE_ID },
-    properties: {
-      Name: {
-        title: [{ text: { content: entry.name } }],
-      },
-      Email: {
-        rich_text: [{ text: { content: entry.email } }],
-      },
-      Company: {
-        rich_text: [{ text: { content: entry.company } }],
-      },
-      LinkedIn: {
-        url: entry.linkedin || null,
-      },
-      Reason: {
-        rich_text: [{ text: { content: entry.reason } }],
-      },
-      "Sign Up": {
-        date: { start: timestamp },
-      },
-      // Fingerprint columns - add these to your Notion database
-      "User Agent": {
-        rich_text: [{ text: { content: entry.userAgent || "" } }],
-      },
-      "Language": {
-        rich_text: [{ text: { content: entry.language || "" } }],
-      },
-      "Platform": {
-        rich_text: [{ text: { content: entry.platform || "" } }],
-      },
-      "Screen": {
-        rich_text: [{ text: { content: entry.screenResolution || "" } }],
-      },
-      "Timezone": {
-        rich_text: [{ text: { content: entry.timezone || "" } }],
-      },
-      "Referrer": {
-        rich_text: [{ text: { content: entry.referrer || "" } }],
-      },
-      "UTM Source": {
-        rich_text: [{ text: { content: entry.utmSource || "" } }],
-      },
-      "UTM Medium": {
-        rich_text: [{ text: { content: entry.utmMedium || "" } }],
-      },
-      "UTM Campaign": {
-        rich_text: [{ text: { content: entry.utmCampaign || "" } }],
-      },
-      "IP Address": {
-        rich_text: [{ text: { content: ip } }],
-      },
+  // Base properties (required columns)
+  const properties: Record<string, unknown> = {
+    Name: {
+      title: [{ text: { content: entry.name } }],
     },
-  });
+    Email: {
+      rich_text: [{ text: { content: entry.email } }],
+    },
+    Company: {
+      rich_text: [{ text: { content: entry.company } }],
+    },
+    LinkedIn: {
+      url: entry.linkedin || null,
+    },
+    Reason: {
+      rich_text: [{ text: { content: entry.reason } }],
+    },
+    "Sign Up": {
+      date: { start: timestamp },
+    },
+  };
+
+  // Try to add fingerprint data - these columns are optional
+  // If they don't exist in Notion, the API will ignore them
+  try {
+    await notion.pages.create({
+      parent: { database_id: NOTION_DATABASE_ID },
+      properties: {
+        ...properties,
+        "User Agent": { rich_text: [{ text: { content: entry.userAgent || "" } }] },
+        "Language": { rich_text: [{ text: { content: entry.language || "" } }] },
+        "Platform": { rich_text: [{ text: { content: entry.platform || "" } }] },
+        "Screen": { rich_text: [{ text: { content: entry.screenResolution || "" } }] },
+        "Timezone": { rich_text: [{ text: { content: entry.timezone || "" } }] },
+        "Referrer": { rich_text: [{ text: { content: entry.referrer || "" } }] },
+        "UTM Source": { rich_text: [{ text: { content: entry.utmSource || "" } }] },
+        "UTM Medium": { rich_text: [{ text: { content: entry.utmMedium || "" } }] },
+        "UTM Campaign": { rich_text: [{ text: { content: entry.utmCampaign || "" } }] },
+        "IP Address": { rich_text: [{ text: { content: ip } }] },
+      },
+    });
+  } catch (error) {
+    // If fingerprint columns fail, try with just base properties
+    console.log("Fingerprint columns may not exist, trying base properties only");
+    await notion.pages.create({
+      parent: { database_id: NOTION_DATABASE_ID },
+      properties,
+    });
+  }
 }
