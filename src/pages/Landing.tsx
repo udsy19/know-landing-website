@@ -1,5 +1,6 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useState, useEffect, useRef, FormEvent } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router";
 
 export default function Landing() {
   // Demo animation phases - like a real product demo
@@ -1180,6 +1181,44 @@ export default function Landing() {
           </motion.button>
         </div>
       </motion.section>
+
+      {/* Footer */}
+      <footer className="border-t border-border/40 py-12 mt-auto">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            {/* Logo & Copyright */}
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <span className="text-lg font-mono font-medium">[know]</span>
+              <p className="text-sm text-muted-foreground">
+                © {new Date().getFullYear()} Know Technologies, Inc. All rights reserved.
+              </p>
+            </div>
+
+            {/* Links */}
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+              <Link to="/privacy" className="hover:text-foreground transition-colors">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" className="hover:text-foreground transition-colors">
+                Terms of Service
+              </Link>
+              <a
+                href="mailto:hello@useknow.io"
+                className="hover:text-foreground transition-colors"
+              >
+                Contact
+              </a>
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          <div className="mt-8 pt-6 border-t border-border/40 text-center">
+            <p className="text-xs text-muted-foreground/60">
+              [know] uses AI to analyze your professional network. We never share your data with third parties.
+            </p>
+          </div>
+        </div>
+      </footer>
 
       {/* Waitlist Modal - Full Screen Takeover */}
       <AnimatePresence>
