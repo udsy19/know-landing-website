@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Clean, minimal pitch deck - Apple keynote style
-// One idea per slide. Let the words breathe.
+// PPT-style pitch deck with landscape layout
 
 export default function PitchDeck() {
   const [slide, setSlide] = useState(0);
   const totalSlides = 12;
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   const next = useCallback(() => setSlide((s) => Math.min(s + 1, totalSlides - 1)), []);
   const prev = useCallback(() => setSlide((s) => Math.max(s - 1, 0)), []);
@@ -22,76 +22,116 @@ export default function PitchDeck() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [next, prev]);
 
-  // Touch swipe navigation for mobile
+  // Touch swipe navigation
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || touchStartY.current === null) return;
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
-    if (Math.abs(diff) > 50) { // minimum swipe distance
-      if (diff > 0) next(); // swipe left = next
-      else prev(); // swipe right = prev
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartX.current - touchEndX;
+    const diffY = touchStartY.current - touchEndY;
+
+    // Only trigger if horizontal swipe is dominant
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+      if (diffX > 0) next();
+      else prev();
     }
     touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
+  // Tap navigation - tap right side for next, left side for prev
+  const handleTap = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const width = rect.width;
+
+    // Ignore taps on navigation dots area (bottom 100px)
+    if (e.clientY > window.innerHeight - 100) return;
+
+    if (x > width * 0.7) next();
+    else if (x < width * 0.3) prev();
   };
 
   return (
     <div
-      className="min-h-screen bg-black text-white overflow-hidden touch-pan-y"
+      className="min-h-screen bg-black text-white overflow-hidden select-none"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onClick={handleTap}
     >
-      {/* Minimal progress */}
-      <div className="fixed top-0 left-0 right-0 h-[2px] bg-white/10 z-50">
+      {/* Progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-white/10 z-50">
         <motion.div
           className="h-full bg-white"
+          initial={false}
           animate={{ width: `${((slide + 1) / totalSlides) * 100}%` }}
+          transition={{ duration: 0.3 }}
         />
       </div>
 
       {/* Slide counter */}
-      <div className="fixed top-6 right-8 text-sm text-white/30 font-mono z-50">
-        {slide + 1}/{totalSlides}
+      <div className="fixed top-4 right-4 text-sm text-white/40 font-mono z-50">
+        {slide + 1} / {totalSlides}
       </div>
 
-      {/* Content */}
-      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 md:p-16">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={slide}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-5xl"
-          >
-            <Slide index={slide} />
-          </motion.div>
-        </AnimatePresence>
+      {/* Left arrow */}
+      <button
+        onClick={(e) => { e.stopPropagation(); prev(); }}
+        className={`fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all ${slide === 0 ? 'opacity-20 cursor-not-allowed' : 'opacity-60 hover:opacity-100'}`}
+        disabled={slide === 0}
+      >
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      {/* Right arrow */}
+      <button
+        onClick={(e) => { e.stopPropagation(); next(); }}
+        className={`fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all ${slide === totalSlides - 1 ? 'opacity-20 cursor-not-allowed' : 'opacity-60 hover:opacity-100'}`}
+        disabled={slide === totalSlides - 1}
+      >
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Slide container - 16:9 aspect ratio */}
+      <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-8">
+        <div className="w-full max-w-6xl aspect-video bg-black rounded-lg overflow-hidden relative flex items-center justify-center px-6 sm:px-12 md:px-20 py-8 sm:py-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slide}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="w-full"
+            >
+              <Slide index={slide} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <div className="fixed bottom-8 left-0 right-0 flex justify-center gap-2 z-50">
+      {/* Bottom navigation dots */}
+      <div className="fixed bottom-4 sm:bottom-6 left-0 right-0 flex justify-center gap-1.5 sm:gap-2 z-50 px-4">
         {Array.from({ length: totalSlides }).map((_, i) => (
           <button
             key={i}
-            onClick={() => setSlide(i)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === slide ? "bg-white w-8" : "bg-white/20 hover:bg-white/40"
+            onClick={(e) => { e.stopPropagation(); setSlide(i); }}
+            className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${
+              i === slide
+                ? "bg-white w-6 sm:w-8"
+                : "bg-white/30 hover:bg-white/50 w-1.5 sm:w-2"
             }`}
           />
         ))}
-      </div>
-
-      {/* Navigation hint */}
-      <div className="fixed bottom-8 right-8 text-xs text-white/20 hidden md:block">
-        ← → to navigate
-      </div>
-      <div className="fixed bottom-8 right-8 text-xs text-white/20 md:hidden">
-        swipe to navigate
       </div>
     </div>
   );
