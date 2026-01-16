@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Clean, minimal pitch deck - Apple keynote style
@@ -7,22 +7,43 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function PitchDeck() {
   const [slide, setSlide] = useState(0);
   const totalSlides = 12;
+  const touchStartX = useRef<number | null>(null);
 
   const next = useCallback(() => setSlide((s) => Math.min(s + 1, totalSlides - 1)), []);
   const prev = useCallback(() => setSlide((s) => Math.max(s - 1, 0)), []);
 
+  // Keyboard navigation
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
-      if (e.key === "f") document.documentElement.requestFullscreen?.();
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [next, prev]);
 
+  // Touch swipe navigation for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    if (Math.abs(diff) > 50) { // minimum swipe distance
+      if (diff > 0) next(); // swipe left = next
+      else prev(); // swipe right = prev
+    }
+    touchStartX.current = null;
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div
+      className="min-h-screen bg-black text-white overflow-hidden touch-pan-y"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Minimal progress */}
       <div className="fixed top-0 left-0 right-0 h-[2px] bg-white/10 z-50">
         <motion.div
@@ -37,7 +58,7 @@ export default function PitchDeck() {
       </div>
 
       {/* Content */}
-      <div className="min-h-screen flex items-center justify-center p-8 md:p-16">
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 md:p-16">
         <AnimatePresence mode="wait">
           <motion.div
             key={slide}
@@ -65,9 +86,12 @@ export default function PitchDeck() {
         ))}
       </div>
 
-      {/* Keyboard hint */}
-      <div className="fixed bottom-8 right-8 text-xs text-white/20">
+      {/* Navigation hint */}
+      <div className="fixed bottom-8 right-8 text-xs text-white/20 hidden md:block">
         ← → to navigate
+      </div>
+      <div className="fixed bottom-8 right-8 text-xs text-white/20 md:hidden">
+        swipe to navigate
       </div>
     </div>
   );
@@ -100,7 +124,7 @@ function S_Title() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-[8rem] md:text-[12rem] font-mono tracking-tighter leading-none"
+        className="text-6xl sm:text-[8rem] md:text-[12rem] font-mono tracking-tighter leading-none"
       >
         [know]
       </motion.div>
@@ -108,7 +132,7 @@ function S_Title() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-2xl md:text-3xl text-white/50 mt-8"
+        className="text-xl sm:text-2xl md:text-3xl text-white/50 mt-6 sm:mt-8 px-4"
       >
         Know anyone, before you meet them.
       </motion.p>
@@ -118,13 +142,13 @@ function S_Title() {
 
 function S_Problem1() {
   return (
-    <div className="space-y-8">
-      <p className="text-white/40 text-lg">THE PROBLEM</p>
-      <h1 className="text-5xl md:text-7xl font-light leading-tight">
+    <div className="space-y-6 sm:space-y-8">
+      <p className="text-white/40 text-base sm:text-lg">THE PROBLEM</p>
+      <h1 className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight">
         You need to reach<br />
         <span className="text-white/40">a decision-maker.</span>
       </h1>
-      <div className="pt-8 space-y-4 text-2xl text-white/60">
+      <div className="pt-4 sm:pt-8 space-y-3 sm:space-y-4 text-lg sm:text-2xl text-white/60">
         <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
           You find them on LinkedIn.
         </motion.p>
@@ -150,31 +174,31 @@ function S_Problem1() {
 function S_Problem2() {
   return (
     <div className="text-center">
-      <p className="text-white/40 text-lg mb-8">THE DATA</p>
-      <div className="grid md:grid-cols-3 gap-12 md:gap-16">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">THE DATA</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 md:gap-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="text-7xl md:text-8xl font-light">91%</div>
-          <p className="text-white/40 mt-4 text-lg">of cold emails<br />get no response</p>
+          <div className="text-5xl sm:text-7xl md:text-8xl font-light">91%</div>
+          <p className="text-white/40 mt-2 sm:mt-4 text-base sm:text-lg">of cold emails<br />get no response</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="text-7xl md:text-8xl font-light">1.2%</div>
-          <p className="text-white/40 mt-4 text-lg">cold outreach<br />conversion rate</p>
+          <div className="text-5xl sm:text-7xl md:text-8xl font-light">1.2%</div>
+          <p className="text-white/40 mt-2 sm:mt-4 text-base sm:text-lg">cold outreach<br />conversion rate</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="text-7xl md:text-8xl font-light text-emerald-400">30%</div>
-          <p className="text-white/40 mt-4 text-lg">warm intro<br />conversion rate</p>
+          <div className="text-5xl sm:text-7xl md:text-8xl font-light text-emerald-400">30%</div>
+          <p className="text-white/40 mt-2 sm:mt-4 text-base sm:text-lg">warm intro<br />conversion rate</p>
         </motion.div>
       </div>
     </div>
@@ -184,18 +208,18 @@ function S_Problem2() {
 function S_Insight() {
   return (
     <div>
-      <p className="text-emerald-400 text-lg mb-8">THE INSIGHT</p>
-      <h1 className="text-5xl md:text-7xl font-light leading-tight mb-8">
+      <p className="text-emerald-400 text-base sm:text-lg mb-6 sm:mb-8">THE INSIGHT</p>
+      <h1 className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight mb-4 sm:mb-8">
         Everyone has a network.
       </h1>
-      <h2 className="text-5xl md:text-7xl font-light leading-tight text-white/30">
+      <h2 className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight text-white/30">
         Nobody knows how to use it.
       </h2>
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-xl text-white/50 mt-12 max-w-2xl"
+        className="text-base sm:text-xl text-white/50 mt-8 sm:mt-12 max-w-2xl"
       >
         Your inbox holds years of relationship data. Who you email, how often,
         who responds. It's more valuable than any CRM — but it's locked away.
@@ -207,12 +231,12 @@ function S_Insight() {
 function S_Solution() {
   return (
     <div>
-      <p className="text-white/40 text-lg mb-8">THE SOLUTION</p>
-      <h1 className="text-5xl md:text-7xl font-light leading-tight mb-12">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">THE SOLUTION</p>
+      <h1 className="text-2xl sm:text-5xl md:text-7xl font-light leading-tight mb-8 sm:mb-12">
         [know] finds the warmest<br />
         path to anyone.
       </h1>
-      <div className="grid md:grid-cols-2 gap-8 text-xl">
+      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 text-base sm:text-xl">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -257,19 +281,19 @@ function S_Solution() {
 function S_HowItWorks() {
   return (
     <div>
-      <p className="text-white/40 text-lg mb-8">HOW IT WORKS</p>
-      <h1 className="text-4xl md:text-5xl font-light leading-tight mb-12">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">HOW IT WORKS</p>
+      <h1 className="text-2xl sm:text-4xl md:text-5xl font-light leading-tight mb-8 sm:mb-12">
         Connect your email. We analyze metadata only.
         <span className="text-white/30"> Never content.</span>
       </h1>
-      <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-8 sm:mb-12">
         {["Gmail", "Outlook", "Calendar", "LinkedIn"].map((name, i) => (
           <motion.div
             key={name}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 + i * 0.1 }}
-            className="px-6 py-3 bg-white/5 border border-white/10 rounded-full text-lg"
+            className="px-4 sm:px-6 py-2 sm:py-3 bg-white/5 border border-white/10 rounded-full text-sm sm:text-lg"
           >
             {name}
           </motion.div>
@@ -278,7 +302,7 @@ function S_HowItWorks() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-white/30 text-2xl"
+          className="text-white/30 text-xl sm:text-2xl"
         >
           →
         </motion.div>
@@ -286,13 +310,13 @@ function S_HowItWorks() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.7 }}
-          className="px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-lg text-emerald-400"
+          className="px-4 sm:px-6 py-2 sm:py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-sm sm:text-lg text-emerald-400"
         >
           Relationship Score
         </motion.div>
       </div>
-      <p className="text-center text-white/40 text-lg">
-        🔒 Privacy-first. We never read your emails.
+      <p className="text-center text-white/40 text-base sm:text-lg">
+        Privacy-first. We never read your emails.
       </p>
     </div>
   );
@@ -301,28 +325,28 @@ function S_HowItWorks() {
 function S_Market() {
   return (
     <div>
-      <p className="text-white/40 text-lg mb-8">MARKET</p>
-      <h1 className="text-5xl md:text-6xl font-light mb-12">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">MARKET</p>
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-light mb-8 sm:mb-12">
         <span className="text-emerald-400">$3.5B</span> opportunity
       </h1>
-      <div className="grid md:grid-cols-2 gap-12">
+      <div className="grid sm:grid-cols-2 gap-8 sm:gap-12">
         <div>
-          <p className="text-white/40 mb-4">TARGET USERS</p>
-          <p className="text-2xl">10M+ sales reps, recruiters, VCs, founders</p>
-          <p className="text-white/40 mt-2">@ $29–79/month</p>
+          <p className="text-white/40 mb-3 sm:mb-4 text-sm sm:text-base">TARGET USERS</p>
+          <p className="text-lg sm:text-2xl">10M+ sales reps, recruiters, VCs, founders</p>
+          <p className="text-white/40 mt-2 text-sm sm:text-base">@ $29–79/month</p>
         </div>
         <div>
-          <p className="text-white/40 mb-4">MARKET VALIDATION</p>
-          <div className="space-y-3">
-            <div className="flex justify-between text-lg">
+          <p className="text-white/40 mb-3 sm:mb-4 text-sm sm:text-base">MARKET VALIDATION</p>
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex justify-between text-sm sm:text-lg">
               <span>ZoomInfo</span>
               <span className="text-white/40">$1.2B revenue</span>
             </div>
-            <div className="flex justify-between text-lg">
+            <div className="flex justify-between text-sm sm:text-lg">
               <span>LinkedIn Sales Nav</span>
               <span className="text-white/40">$1.5B revenue</span>
             </div>
-            <div className="flex justify-between text-lg">
+            <div className="flex justify-between text-sm sm:text-lg">
               <span>Apollo.io</span>
               <span className="text-white/40">$1.6B valuation</span>
             </div>
@@ -333,7 +357,7 @@ function S_Market() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-xl text-white/50 mt-12"
+        className="text-base sm:text-xl text-white/50 mt-8 sm:mt-12"
       >
         They sell contact data. We reveal the relationships you already have.
       </motion.p>
@@ -344,25 +368,25 @@ function S_Market() {
 function S_Traction() {
   return (
     <div className="text-center">
-      <p className="text-white/40 text-lg mb-8">TRACTION</p>
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">TRACTION</p>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-8xl md:text-9xl font-light mb-4"
+        className="text-6xl sm:text-8xl md:text-9xl font-light mb-2 sm:mb-4"
       >
         2,847
       </motion.div>
-      <p className="text-2xl text-white/60 mb-2">waitlist signups</p>
-      <p className="text-emerald-400 text-xl">in 3 weeks · $0 marketing spend</p>
+      <p className="text-xl sm:text-2xl text-white/60 mb-2">waitlist signups</p>
+      <p className="text-emerald-400 text-base sm:text-xl">in 3 weeks · $0 marketing spend</p>
 
-      <div className="grid md:grid-cols-2 gap-8 mt-16 text-left max-w-2xl mx-auto">
-        <div className="border-l-2 border-white/10 pl-6">
-          <p className="text-4xl font-light">MVP</p>
-          <p className="text-white/40">Built in 8 weeks</p>
+      <div className="grid grid-cols-2 gap-6 sm:gap-8 mt-10 sm:mt-16 text-left max-w-2xl mx-auto">
+        <div className="border-l-2 border-white/10 pl-4 sm:pl-6">
+          <p className="text-2xl sm:text-4xl font-light">MVP</p>
+          <p className="text-white/40 text-sm sm:text-base">Built in 8 weeks</p>
         </div>
-        <div className="border-l-2 border-white/10 pl-6">
-          <p className="text-4xl font-light">100%</p>
-          <p className="text-white/40">Organic growth</p>
+        <div className="border-l-2 border-white/10 pl-4 sm:pl-6">
+          <p className="text-2xl sm:text-4xl font-light">100%</p>
+          <p className="text-white/40 text-sm sm:text-base">Organic growth</p>
         </div>
       </div>
     </div>
@@ -372,11 +396,11 @@ function S_Traction() {
 function S_Competition() {
   return (
     <div>
-      <p className="text-white/40 text-lg mb-8">COMPETITION</p>
-      <h1 className="text-4xl md:text-5xl font-light mb-12">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">COMPETITION</p>
+      <h1 className="text-2xl sm:text-4xl md:text-5xl font-light mb-8 sm:mb-12">
         We're not competing. <span className="text-white/30">We're creating.</span>
       </h1>
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {[
           { name: "LinkedIn Sales Nav", them: "Searches their database", us: "Maps your relationships" },
           { name: "ZoomInfo / Apollo", them: "Sells contact data", us: "Finds warm paths" },
@@ -387,7 +411,7 @@ function S_Competition() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 + i * 0.1 }}
-            className="grid grid-cols-3 gap-4 py-4 border-b border-white/10"
+            className="grid grid-cols-3 gap-2 sm:gap-4 py-3 sm:py-4 border-b border-white/10 text-xs sm:text-base"
           >
             <span className="font-medium">{row.name}</span>
             <span className="text-white/40">{row.them}</span>
@@ -402,16 +426,16 @@ function S_Competition() {
 function S_Team() {
   return (
     <div>
-      <p className="text-white/40 text-lg mb-8">TEAM</p>
-      <div className="grid md:grid-cols-2 gap-12">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">TEAM</p>
+      <div className="grid sm:grid-cols-2 gap-8 sm:gap-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="text-4xl mb-4">Satyam Dave</div>
-          <p className="text-emerald-400 text-lg mb-4">CEO</p>
-          <ul className="space-y-2 text-white/60">
+          <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">Satyam Dave</div>
+          <p className="text-emerald-400 text-base sm:text-lg mb-3 sm:mb-4">CEO</p>
+          <ul className="space-y-1 sm:space-y-2 text-white/60 text-sm sm:text-base">
             <li>AI Product Manager @ Microsoft</li>
             <li>Solutions Engineer @ Verkada</li>
             <li>YC startup newsletter · 550+ subscribers</li>
@@ -422,9 +446,9 @@ function S_Team() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="text-4xl mb-4">Udaya Vijay Anand</div>
-          <p className="text-emerald-400 text-lg mb-4">CTO</p>
-          <ul className="space-y-2 text-white/60">
+          <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">Udaya Vijay Anand</div>
+          <p className="text-emerald-400 text-base sm:text-lg mb-3 sm:mb-4">CTO</p>
+          <ul className="space-y-1 sm:space-y-2 text-white/60 text-sm sm:text-base">
             <li>Cyber Defense @ KPMG India</li>
             <li>Built AI safety guardrails for enterprise</li>
             <li>Automated security intel · 70K+ pages</li>
@@ -435,7 +459,7 @@ function S_Team() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-center text-white/40 mt-12"
+        className="text-center text-white/40 mt-8 sm:mt-12 text-sm sm:text-base"
       >
         Purdue University '26
       </motion.p>
@@ -446,20 +470,20 @@ function S_Team() {
 function S_Ask() {
   return (
     <div>
-      <p className="text-white/40 text-lg mb-8">THE ASK</p>
-      <div className="text-center mb-16">
+      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">THE ASK</p>
+      <div className="text-center mb-10 sm:mb-16">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-7xl md:text-8xl font-light text-emerald-400"
+          className="text-5xl sm:text-7xl md:text-8xl font-light text-emerald-400"
         >
           $500K
         </motion.div>
-        <p className="text-2xl text-white/40 mt-2">Pre-Seed</p>
+        <p className="text-xl sm:text-2xl text-white/40 mt-2">Pre-Seed</p>
       </div>
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-sm sm:text-base">
         <div>
-          <p className="text-white/40 text-sm mb-4">USE OF FUNDS</p>
+          <p className="text-white/40 text-xs sm:text-sm mb-3 sm:mb-4">USE OF FUNDS</p>
           <div className="space-y-2">
             <div className="flex justify-between"><span>Product</span><span className="text-white/40">40%</span></div>
             <div className="flex justify-between"><span>Engineering</span><span className="text-white/40">40%</span></div>
@@ -467,7 +491,7 @@ function S_Ask() {
           </div>
         </div>
         <div>
-          <p className="text-white/40 text-sm mb-4">MILESTONES</p>
+          <p className="text-white/40 text-xs sm:text-sm mb-3 sm:mb-4">MILESTONES</p>
           <div className="space-y-2">
             <div className="flex justify-between"><span>Month 3</span><span className="text-white/40">1K users</span></div>
             <div className="flex justify-between"><span>Month 6</span><span className="text-white/40">$50K MRR</span></div>
@@ -475,7 +499,7 @@ function S_Ask() {
           </div>
         </div>
         <div>
-          <p className="text-white/40 text-sm mb-4">WHY NOW</p>
+          <p className="text-white/40 text-xs sm:text-sm mb-3 sm:mb-4">WHY NOW</p>
           <ul className="space-y-2 text-white/70">
             <li>AI makes research 10x cheaper</li>
             <li>Cold outreach declining fast</li>
@@ -493,7 +517,7 @@ function S_Close() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-5xl md:text-7xl font-light leading-tight"
+        className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight"
       >
         The path to anyone<br />
         <span className="text-white/30">shouldn't be cold.</span>
@@ -502,10 +526,10 @@ function S_Close() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-16"
+        className="mt-10 sm:mt-16"
       >
-        <div className="text-6xl font-mono">[know]</div>
-        <p className="text-white/40 mt-4">useknow.io</p>
+        <div className="text-4xl sm:text-6xl font-mono">[know]</div>
+        <p className="text-white/40 mt-4 text-sm sm:text-base">useknow.io</p>
       </motion.div>
     </div>
   );
