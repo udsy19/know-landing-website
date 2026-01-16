@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// PPT-style pitch deck with landscape layout
+// YC-ready pitch deck for [know]
 
 export default function PitchDeck() {
   const [slide, setSlide] = useState(0);
@@ -12,7 +12,6 @@ export default function PitchDeck() {
   const next = useCallback(() => setSlide((s) => Math.min(s + 1, totalSlides - 1)), []);
   const prev = useCallback(() => setSlide((s) => Math.max(s - 1, 0)), []);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
@@ -22,7 +21,6 @@ export default function PitchDeck() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [next, prev]);
 
-  // Touch swipe navigation
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -34,8 +32,6 @@ export default function PitchDeck() {
     const touchEndY = e.changedTouches[0].clientY;
     const diffX = touchStartX.current - touchEndX;
     const diffY = touchStartY.current - touchEndY;
-
-    // Only trigger if horizontal swipe is dominant
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
       if (diffX > 0) next();
       else prev();
@@ -44,15 +40,11 @@ export default function PitchDeck() {
     touchStartY.current = null;
   };
 
-  // Tap navigation - tap right side for next, left side for prev
   const handleTap = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const width = rect.width;
-
-    // Ignore taps on navigation dots area (bottom 100px)
     if (e.clientY > window.innerHeight - 100) return;
-
     if (x > width * 0.7) next();
     else if (x < width * 0.3) prev();
   };
@@ -64,7 +56,6 @@ export default function PitchDeck() {
       onTouchEnd={handleTouchEnd}
       onClick={handleTap}
     >
-      {/* Progress bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-white/10 z-50">
         <motion.div
           className="h-full bg-white"
@@ -74,15 +65,13 @@ export default function PitchDeck() {
         />
       </div>
 
-      {/* Slide counter */}
       <div className="fixed top-4 right-4 text-sm text-white/40 font-mono z-50">
         {slide + 1} / {totalSlides}
       </div>
 
-      {/* Left arrow */}
       <button
         onClick={(e) => { e.stopPropagation(); prev(); }}
-        className={`fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all ${slide === 0 ? 'opacity-20 cursor-not-allowed' : 'opacity-60 hover:opacity-100'}`}
+        className={`fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all ${slide === 0 ? 'opacity-20' : 'opacity-60 hover:opacity-100'}`}
         disabled={slide === 0}
       >
         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,10 +79,9 @@ export default function PitchDeck() {
         </svg>
       </button>
 
-      {/* Right arrow */}
       <button
         onClick={(e) => { e.stopPropagation(); next(); }}
-        className={`fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all ${slide === totalSlides - 1 ? 'opacity-20 cursor-not-allowed' : 'opacity-60 hover:opacity-100'}`}
+        className={`fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all ${slide === totalSlides - 1 ? 'opacity-20' : 'opacity-60 hover:opacity-100'}`}
         disabled={slide === totalSlides - 1}
       >
         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,9 +89,8 @@ export default function PitchDeck() {
         </svg>
       </button>
 
-      {/* Slide container - full screen on mobile, 16:9 on desktop */}
       <div className="min-h-screen flex items-center justify-center px-12 sm:px-16 md:px-8 py-16 sm:py-8">
-        <div className="w-full max-w-6xl md:aspect-video bg-black rounded-lg overflow-visible relative flex items-center justify-center md:px-20 md:py-12">
+        <div className="w-full max-w-5xl md:aspect-video bg-black overflow-visible relative flex items-center justify-center md:px-16 md:py-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={slide}
@@ -119,16 +106,13 @@ export default function PitchDeck() {
         </div>
       </div>
 
-      {/* Bottom navigation dots */}
       <div className="fixed bottom-4 sm:bottom-6 left-0 right-0 flex justify-center gap-1.5 sm:gap-2 z-50 px-4">
         {Array.from({ length: totalSlides }).map((_, i) => (
           <button
             key={i}
             onClick={(e) => { e.stopPropagation(); setSlide(i); }}
             className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${
-              i === slide
-                ? "bg-white w-6 sm:w-8"
-                : "bg-white/30 hover:bg-white/50 w-1.5 sm:w-2"
+              i === slide ? "bg-white w-6 sm:w-8" : "bg-white/30 hover:bg-white/50 w-1.5 sm:w-2"
             }`}
           />
         ))}
@@ -140,11 +124,11 @@ export default function PitchDeck() {
 function Slide({ index }: { index: number }) {
   switch (index) {
     case 0: return <S_Title />;
-    case 1: return <S_Problem1 />;
-    case 2: return <S_Problem2 />;
+    case 1: return <S_Problem />;
+    case 2: return <S_WhyMatters />;
     case 3: return <S_Insight />;
     case 4: return <S_Solution />;
-    case 5: return <S_HowItWorks />;
+    case 5: return <S_Moat />;
     case 6: return <S_Market />;
     case 7: return <S_Traction />;
     case 8: return <S_Competition />;
@@ -164,7 +148,7 @@ function S_Title() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-6xl sm:text-[8rem] md:text-[12rem] font-mono tracking-tighter leading-none"
+        className="text-5xl sm:text-7xl md:text-9xl font-mono tracking-tighter leading-none"
       >
         [know]
       </motion.div>
@@ -172,73 +156,92 @@ function S_Title() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-xl sm:text-2xl md:text-3xl text-white/50 mt-6 sm:mt-8 px-4"
+        className="text-xl sm:text-2xl md:text-3xl text-white/60 mt-6 sm:mt-8"
       >
-        Know anyone, before you meet them.
+        Your Network, Searchable.
       </motion.p>
     </div>
   );
 }
 
-function S_Problem1() {
+function S_Problem() {
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <p className="text-white/40 text-base sm:text-lg">THE PROBLEM</p>
-      <h1 className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight">
-        You need to reach<br />
-        <span className="text-white/40">a decision-maker.</span>
+    <div className="space-y-6">
+      <p className="text-white/40 text-sm sm:text-base">THE PROBLEM</p>
+      <h1 className="text-2xl sm:text-4xl md:text-5xl font-light leading-tight">
+        Finding warm introductions is broken.
       </h1>
-      <div className="pt-4 sm:pt-8 space-y-3 sm:space-y-4 text-lg sm:text-2xl text-white/60">
-        <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-          You find them on LinkedIn.
+      <div className="space-y-3 text-base sm:text-xl text-white/70 pt-4">
+        <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+          Professionals spend <span className="text-white">10+ hours per week</span> asking "do you know anyone who..."
         </motion.p>
-        <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
-          You write the perfect cold email.
-        </motion.p>
-        <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }}>
-          You send it.
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.9 }}
-          className="text-white text-3xl pt-4"
-        >
-          Nothing.
-        </motion.p>
+        <div className="grid grid-cols-2 gap-3 pt-4 text-sm sm:text-base">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-white/50">
+            LinkedIn search → <span className="text-white/70">Hours</span>
+          </motion.div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-white/50">
+            Old emails → <span className="text-white/70">Days</span>
+          </motion.div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-white/50">
+            Friend intros → <span className="text-white/70">Weeks</span>
+          </motion.div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-white/50">
+            Cold outreach → <span className="text-white/70">2% response</span>
+          </motion.div>
+        </div>
       </div>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8 }}
+        className="text-lg sm:text-2xl pt-4"
+      >
+        Warm intros close <span className="text-emerald-400">34x more deals</span>.
+        <br />
+        <span className="text-white/50">But finding them is still manual in 2026.</span>
+      </motion.p>
     </div>
   );
 }
 
-function S_Problem2() {
+function S_WhyMatters() {
   return (
-    <div className="text-center">
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">THE DATA</p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 md:gap-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="text-5xl sm:text-7xl md:text-8xl font-light">91%</div>
-          <p className="text-white/40 mt-2 sm:mt-4 text-base sm:text-lg">of cold emails<br />get no response</p>
+    <div>
+      <p className="text-white/40 text-sm sm:text-base mb-6 sm:mb-8">WHY THIS MATTERS</p>
+      <div className="grid grid-cols-3 gap-4 sm:gap-8 mb-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
+          <div className="text-3xl sm:text-5xl md:text-6xl font-light">2%</div>
+          <p className="text-white/40 mt-2 text-xs sm:text-sm">cold email<br />response rate</p>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div className="text-5xl sm:text-7xl md:text-8xl font-light">1.2%</div>
-          <p className="text-white/40 mt-2 sm:mt-4 text-base sm:text-lg">cold outreach<br />conversion rate</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-center">
+          <div className="text-3xl sm:text-5xl md:text-6xl font-light text-emerald-400">68%</div>
+          <p className="text-white/40 mt-2 text-xs sm:text-sm">warm intro<br />response rate</p>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <div className="text-5xl sm:text-7xl md:text-8xl font-light text-emerald-400">30%</div>
-          <p className="text-white/40 mt-2 sm:mt-4 text-base sm:text-lg">warm intro<br />conversion rate</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-center">
+          <div className="text-3xl sm:text-5xl md:text-6xl font-light">10hrs</div>
+          <p className="text-white/40 mt-2 text-xs sm:text-sm">per week<br />wasted</p>
+        </motion.div>
+      </div>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center text-lg sm:text-xl text-white/60 mb-8"
+      >
+        34x more effective, but manual
+      </motion.p>
+      <div className="grid grid-cols-3 gap-4 sm:gap-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="text-center">
+          <div className="text-3xl sm:text-5xl md:text-6xl font-light">91%</div>
+          <p className="text-white/40 mt-2 text-xs sm:text-sm">of cold emails<br />ignored</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="text-center">
+          <div className="text-3xl sm:text-5xl md:text-6xl font-light">3 wks</div>
+          <p className="text-white/40 mt-2 text-xs sm:text-sm">to find one<br />warm path</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="text-center">
+          <div className="text-3xl sm:text-5xl md:text-6xl font-light text-red-400">$47B</div>
+          <p className="text-white/40 mt-2 text-xs sm:text-sm">wasted on<br />cold outreach</p>
         </motion.div>
       </div>
     </div>
@@ -248,22 +251,34 @@ function S_Problem2() {
 function S_Insight() {
   return (
     <div>
-      <p className="text-emerald-400 text-base sm:text-lg mb-6 sm:mb-8">THE INSIGHT</p>
-      <h1 className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight mb-4 sm:mb-8">
-        Everyone has a network.
+      <p className="text-emerald-400 text-sm sm:text-base mb-6 sm:mb-8">THE INSIGHT</p>
+      <h1 className="text-xl sm:text-3xl md:text-4xl font-light leading-tight mb-6 sm:mb-10">
+        The average professional has:
       </h1>
-      <h2 className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight text-white/30">
-        Nobody knows how to use it.
-      </h2>
-      <motion.p
+      <div className="space-y-4 sm:space-y-6">
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="flex items-baseline gap-4">
+          <span className="text-3xl sm:text-5xl md:text-6xl font-light">50,000+</span>
+          <span className="text-white/50 text-lg sm:text-2xl">emails</span>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="flex items-baseline gap-4">
+          <span className="text-3xl sm:text-5xl md:text-6xl font-light">2,500+</span>
+          <span className="text-white/50 text-lg sm:text-2xl">connections</span>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="flex items-baseline gap-4">
+          <span className="text-3xl sm:text-5xl md:text-6xl font-light">10 years</span>
+          <span className="text-white/50 text-lg sm:text-2xl">of relationship data</span>
+        </motion.div>
+      </div>
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-base sm:text-xl text-white/50 mt-8 sm:mt-12 max-w-2xl"
+        transition={{ delay: 0.6 }}
+        className="mt-8 sm:mt-12 space-y-2"
       >
-        Your inbox holds years of relationship data. Who you email, how often,
-        who responds. It's more valuable than any CRM — but it's locked away.
-      </motion.p>
+        <p className="text-white/50 text-lg sm:text-2xl">All sitting in your inbox.</p>
+        <p className="text-white/50 text-lg sm:text-2xl">Completely unsearchable.</p>
+        <p className="text-emerald-400 text-xl sm:text-3xl mt-4">We make it searchable.</p>
+      </motion.div>
     </div>
   );
 }
@@ -271,93 +286,94 @@ function S_Insight() {
 function S_Solution() {
   return (
     <div>
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">THE SOLUTION</p>
-      <h1 className="text-2xl sm:text-5xl md:text-7xl font-light leading-tight mb-8 sm:mb-12">
-        [know] finds the warmest<br />
-        path to anyone.
+      <p className="text-white/40 text-sm sm:text-base mb-4 sm:mb-6">THE SOLUTION</p>
+      <h1 className="text-xl sm:text-3xl md:text-4xl font-light mb-6 sm:mb-8">
+        [know] turns <span className="text-emerald-400">10 hours</span> into <span className="text-emerald-400">10 seconds</span>.
       </h1>
-      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 text-base sm:text-xl">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="border-l-2 border-white/20 pl-6"
-        >
-          <span className="text-emerald-400">Search</span> for any person
-          <p className="text-white/40 mt-1">CEO, investor, hiring manager</p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6"
+      >
+        <p className="text-white/50 text-sm">Search:</p>
+        <p className="text-lg sm:text-xl">"VCs investing in AI robotics"</p>
+        <p className="text-emerald-400 mt-2">→ 12 results in 0.8 seconds</p>
+      </motion.div>
+
+      <div className="grid grid-cols-3 gap-3 sm:gap-6 text-sm sm:text-base">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white/5 rounded-lg p-3 sm:p-4">
+          <p className="text-emerald-400 font-medium mb-2 sm:mb-3">CONNECT</p>
+          <div className="text-white/70 space-y-1">
+            <p>Gmail</p>
+            <p>Calendar</p>
+            <p>LinkedIn</p>
+          </div>
+          <p className="text-white/40 text-xs sm:text-sm mt-3">2 minutes, one time</p>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="border-l-2 border-white/20 pl-6"
-        >
-          <span className="text-emerald-400">See</span> who can connect you
-          <p className="text-white/40 mt-1">You → mutual contact → them</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white/5 rounded-lg p-3 sm:p-4">
+          <p className="text-emerald-400 font-medium mb-2 sm:mb-3">SEARCH</p>
+          <div className="text-white/70 space-y-1">
+            <p>Any role,</p>
+            <p>company,</p>
+            <p>criteria</p>
+          </div>
+          <p className="text-white/40 text-xs sm:text-sm mt-3">0.8 seconds per search</p>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="border-l-2 border-white/20 pl-6"
-        >
-          <span className="text-emerald-400">Research</span> before you reach out
-          <p className="text-white/40 mt-1">AI-generated brief in minutes</p>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="border-l-2 border-white/20 pl-6"
-        >
-          <span className="text-emerald-400">Request</span> the introduction
-          <p className="text-white/40 mt-1">One click to activate the path</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white/5 rounded-lg p-3 sm:p-4">
+          <p className="text-emerald-400 font-medium mb-2 sm:mb-3">GET INTRO</p>
+          <div className="text-white/70 space-y-1">
+            <p>Sarah Chen</p>
+            <p>You → Sarah</p>
+            <p>Score: 0.92</p>
+          </div>
+          <p className="text-white/40 text-xs sm:text-sm mt-3">One click, 85% response</p>
         </motion.div>
       </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="text-center text-white/50 mt-6 text-sm sm:text-lg"
+      >
+        From hours of searching to seconds of results.
+      </motion.p>
     </div>
   );
 }
 
-function S_HowItWorks() {
+function S_Moat() {
   return (
     <div>
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">HOW IT WORKS</p>
-      <h1 className="text-2xl sm:text-4xl md:text-5xl font-light leading-tight mb-8 sm:mb-12">
-        Connect your email. We analyze metadata only.
-        <span className="text-white/30"> Never content.</span>
-      </h1>
-      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-8 sm:mb-12">
-        {["Gmail", "Outlook", "Calendar", "LinkedIn"].map((name, i) => (
-          <motion.div
-            key={name}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 + i * 0.1 }}
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-white/5 border border-white/10 rounded-full text-sm sm:text-lg"
-          >
-            {name}
-          </motion.div>
-        ))}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="text-white/30 text-xl sm:text-2xl"
-        >
-          →
+      <p className="text-white/40 text-sm sm:text-base mb-6 sm:mb-8">THE MOAT</p>
+      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <h3 className="text-emerald-400 text-lg sm:text-xl mb-2">Network Effects</h3>
+          <p className="text-white/60 text-sm sm:text-base">More users = better connection paths discovered</p>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.7 }}
-          className="px-4 sm:px-6 py-2 sm:py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-sm sm:text-lg text-emerald-400"
-        >
-          Relationship Score
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <h3 className="text-emerald-400 text-lg sm:text-xl mb-2">Data Moat</h3>
+          <p className="text-white/60 text-sm sm:text-base">Proprietary relationship graph gets smarter daily</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <h3 className="text-emerald-400 text-lg sm:text-xl mb-2">Privacy-First</h3>
+          <p className="text-white/60 text-sm sm:text-base">Never read email content. Metadata only. Can't be replicated.</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <h3 className="text-emerald-400 text-lg sm:text-xl mb-2">Switching Costs</h3>
+          <p className="text-white/60 text-sm sm:text-base">Teams rely on it. Their network = locked in.</p>
         </motion.div>
       </div>
-      <p className="text-center text-white/40 text-base sm:text-lg">
-        Privacy-first. We never read your emails.
-      </p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="text-center text-xl sm:text-2xl mt-8 sm:mt-12"
+      >
+        Tech is hard. <span className="text-white/50">We figured it out.</span>
+      </motion.p>
     </div>
   );
 }
@@ -365,28 +381,33 @@ function S_HowItWorks() {
 function S_Market() {
   return (
     <div>
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">MARKET</p>
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-light mb-8 sm:mb-12">
-        <span className="text-emerald-400">$3.5B</span> opportunity
+      <p className="text-white/40 text-sm sm:text-base mb-4 sm:mb-6">MARKET</p>
+      <h1 className="text-3xl sm:text-5xl md:text-6xl font-light mb-6 sm:mb-8">
+        <span className="text-emerald-400">$117B</span> global opportunity
       </h1>
-      <div className="grid sm:grid-cols-2 gap-8 sm:gap-12">
+      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-6">
         <div>
-          <p className="text-white/40 mb-3 sm:mb-4 text-sm sm:text-base">TARGET USERS</p>
-          <p className="text-lg sm:text-2xl">10M+ sales reps, recruiters, VCs, founders</p>
-          <p className="text-white/40 mt-2 text-sm sm:text-base">@ $29–79/month</p>
+          <p className="text-white/40 text-xs sm:text-sm mb-3">TARGET MARKET</p>
+          <p className="text-base sm:text-lg mb-2">200M knowledge workers globally</p>
+          <p className="text-white/50 text-sm sm:text-base mb-3">Wedge: 10M sales reps + recruiters in US</p>
+          <div className="text-xs sm:text-sm text-white/40 space-y-1">
+            <p>@ $49/month:</p>
+            <p>→ Wedge (10M) = <span className="text-white/70">$5.9B</span></p>
+            <p>→ Full market (200M) = <span className="text-white/70">$117B</span></p>
+          </div>
         </div>
         <div>
-          <p className="text-white/40 mb-3 sm:mb-4 text-sm sm:text-base">MARKET VALIDATION</p>
-          <div className="space-y-2 sm:space-y-3">
-            <div className="flex justify-between text-sm sm:text-lg">
+          <p className="text-white/40 text-xs sm:text-sm mb-3">MARKET VALIDATION</p>
+          <div className="space-y-2 text-sm sm:text-base">
+            <div className="flex justify-between">
               <span>ZoomInfo</span>
               <span className="text-white/40">$1.2B revenue</span>
             </div>
-            <div className="flex justify-between text-sm sm:text-lg">
+            <div className="flex justify-between">
               <span>LinkedIn Sales Nav</span>
               <span className="text-white/40">$1.5B revenue</span>
             </div>
-            <div className="flex justify-between text-sm sm:text-lg">
+            <div className="flex justify-between">
               <span>Apollo.io</span>
               <span className="text-white/40">$1.6B valuation</span>
             </div>
@@ -397,9 +418,11 @@ function S_Market() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-base sm:text-xl text-white/50 mt-8 sm:mt-12"
+        className="text-sm sm:text-lg text-white/60"
       >
-        They sell contact data. We reveal the relationships you already have.
+        They sell contact data. <span className="text-white">We reveal relationships you already have.</span>
+        <br />
+        <span className="text-emerald-400">Bigger market. Better product.</span>
       </motion.p>
     </div>
   );
@@ -408,25 +431,42 @@ function S_Market() {
 function S_Traction() {
   return (
     <div className="text-center">
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">TRACTION</p>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-6xl sm:text-8xl md:text-9xl font-light mb-2 sm:mb-4"
-      >
+      <p className="text-white/40 text-sm sm:text-base mb-6 sm:mb-8">TRACTION</p>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-5xl sm:text-7xl md:text-8xl font-light mb-2">
         2,847
       </motion.div>
-      <p className="text-xl sm:text-2xl text-white/60 mb-2">waitlist signups</p>
-      <p className="text-emerald-400 text-base sm:text-xl">in 3 weeks · $0 marketing spend</p>
+      <p className="text-lg sm:text-xl text-white/60 mb-1">waitlist signups in 21 days</p>
+      <p className="text-emerald-400 text-sm sm:text-base mb-6">$0 marketing spend · 100% organic</p>
 
-      <div className="grid grid-cols-2 gap-6 sm:gap-8 mt-10 sm:mt-16 text-left max-w-2xl mx-auto">
-        <div className="border-l-2 border-white/10 pl-4 sm:pl-6">
-          <p className="text-2xl sm:text-4xl font-light">MVP</p>
-          <p className="text-white/40 text-sm sm:text-base">Built in 8 weeks</p>
+      <div className="grid grid-cols-3 gap-4 text-sm sm:text-base mb-6 max-w-md mx-auto">
+        <div>
+          <p className="text-white/40">Week 1</p>
+          <p className="text-lg sm:text-xl">427</p>
         </div>
-        <div className="border-l-2 border-white/10 pl-4 sm:pl-6">
-          <p className="text-2xl sm:text-4xl font-light">100%</p>
-          <p className="text-white/40 text-sm sm:text-base">Organic growth</p>
+        <div>
+          <p className="text-white/40">Week 2</p>
+          <p className="text-lg sm:text-xl">891 <span className="text-emerald-400 text-xs">+108%</span></p>
+        </div>
+        <div>
+          <p className="text-white/40">Week 3</p>
+          <p className="text-lg sm:text-xl">1,529 <span className="text-emerald-400 text-xs">+72%</span></p>
+        </div>
+      </div>
+
+      <p className="text-white/50 text-sm sm:text-base mb-4">Average growth: <span className="text-white">95% week-over-week</span></p>
+
+      <div className="grid grid-cols-3 gap-4 text-xs sm:text-sm text-white/60 max-w-lg mx-auto">
+        <div>
+          <p className="text-white/40 mb-1">Private beta</p>
+          <p>50 users testing</p>
+        </div>
+        <div>
+          <p className="text-white/40 mb-1">Public beta</p>
+          <p>Jan 27 launch</p>
+        </div>
+        <div>
+          <p className="text-white/40 mb-1">Pipeline</p>
+          <p className="text-emerald-400">$145K ARR</p>
         </div>
       </div>
     </div>
@@ -436,29 +476,43 @@ function S_Traction() {
 function S_Competition() {
   return (
     <div>
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">COMPETITION</p>
-      <h1 className="text-2xl sm:text-4xl md:text-5xl font-light mb-8 sm:mb-12">
-        We're not competing. <span className="text-white/30">We're creating.</span>
+      <p className="text-white/40 text-sm sm:text-base mb-4 sm:mb-6">COMPETITION</p>
+      <h1 className="text-xl sm:text-3xl font-light mb-6">
+        We're not competing. <span className="text-white/40">We're creating.</span>
       </h1>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-3 text-xs sm:text-sm">
+        <div className="grid grid-cols-3 gap-2 py-2 border-b border-white/10 text-white/40">
+          <span></span>
+          <span>THEM</span>
+          <span className="text-emerald-400">[KNOW]</span>
+        </div>
         {[
-          { name: "LinkedIn Sales Nav", them: "Searches their database", us: "Maps your relationships" },
-          { name: "ZoomInfo / Apollo", them: "Sells contact data", us: "Finds warm paths" },
-          { name: "Affinity", them: "$500/seat enterprise CRM", us: "$29/mo for everyone" },
+          { name: "LinkedIn Sales Nav", them: "Searches their 1B user database", us: "Searches YOUR relationships" },
+          { name: "ZoomInfo / Apollo", them: "Sells contact data for strangers", us: "Finds warm intro paths instantly" },
+          { name: "Affinity", them: "$500/seat enterprise CRM", us: "$49/mo consumer product" },
+          { name: "Pally/Clay", them: "Tracks relationships manually", us: "AI-powered, 0.8s results" },
         ].map((row, i) => (
           <motion.div
             key={row.name}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 + i * 0.1 }}
-            className="grid grid-cols-3 gap-2 sm:gap-4 py-3 sm:py-4 border-b border-white/10 text-xs sm:text-base"
+            transition={{ delay: 0.1 + i * 0.1 }}
+            className="grid grid-cols-3 gap-2 py-2 border-b border-white/10"
           >
-            <span className="font-medium">{row.name}</span>
+            <span className="text-white/70">{row.name}</span>
             <span className="text-white/40">{row.them}</span>
             <span className="text-emerald-400">{row.us}</span>
           </motion.div>
         ))}
       </div>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="text-sm sm:text-base text-white/60 mt-6 text-center"
+      >
+        They sell data about strangers. <span className="text-white">We reveal relationships you already have.</span>
+      </motion.p>
     </div>
   );
 }
@@ -466,32 +520,26 @@ function S_Competition() {
 function S_Team() {
   return (
     <div>
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">TEAM</p>
-      <div className="grid sm:grid-cols-2 gap-8 sm:gap-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">Satyam Dave</div>
-          <p className="text-emerald-400 text-base sm:text-lg mb-3 sm:mb-4">CEO</p>
-          <ul className="space-y-1 sm:space-y-2 text-white/60 text-sm sm:text-base">
-            <li>AI Product Manager @ Microsoft</li>
-            <li>Solutions Engineer @ Verkada</li>
+      <p className="text-white/40 text-sm sm:text-base mb-6 sm:mb-8">TEAM</p>
+      <div className="grid sm:grid-cols-2 gap-6 sm:gap-10">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="text-xl sm:text-3xl mb-2">Satyam Dave</div>
+          <p className="text-emerald-400 text-sm sm:text-base mb-3">CEO & Co-founder</p>
+          <ul className="space-y-1 text-white/60 text-xs sm:text-sm">
+            <li>Ex-Microsoft · AI Product Manager</li>
+            <li>Ex-Verkada · Solutions Engineer</li>
             <li>YC startup newsletter · 550+ subscribers</li>
+            <li>Purdue University '26</li>
           </ul>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">Udaya Vijay Anand</div>
-          <p className="text-emerald-400 text-base sm:text-lg mb-3 sm:mb-4">CTO</p>
-          <ul className="space-y-1 sm:space-y-2 text-white/60 text-sm sm:text-base">
-            <li>Cyber Defense @ KPMG India</li>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <div className="text-xl sm:text-3xl mb-2">Udaya Vijay Anand</div>
+          <p className="text-emerald-400 text-sm sm:text-base mb-3">CTO & Co-founder</p>
+          <ul className="space-y-1 text-white/60 text-xs sm:text-sm">
+            <li>Ex-KPMG · Cyber Defense Engineer</li>
+            <li>Ex-DBS Bank · Security Automation</li>
             <li>Built AI safety guardrails for enterprise</li>
-            <li>Automated security intel · 70K+ pages</li>
+            <li>Purdue University '26</li>
           </ul>
         </motion.div>
       </div>
@@ -499,9 +547,9 @@ function S_Team() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-center text-white/40 mt-8 sm:mt-12 text-sm sm:text-base"
+        className="text-center text-white/40 mt-8 text-xs sm:text-sm"
       >
-        Purdue University '26
+        Technical founders who've built at scale. Now building the future of networking.
       </motion.p>
     </div>
   );
@@ -510,41 +558,40 @@ function S_Team() {
 function S_Ask() {
   return (
     <div>
-      <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8">THE ASK</p>
-      <div className="text-center mb-10 sm:mb-16">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-5xl sm:text-7xl md:text-8xl font-light text-emerald-400"
-        >
-          $500K
+      <p className="text-white/40 text-sm sm:text-base mb-4 sm:mb-6">THE ASK</p>
+      <div className="text-center mb-6 sm:mb-8">
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-4xl sm:text-6xl font-light text-emerald-400">
+          $750K
         </motion.div>
-        <p className="text-xl sm:text-2xl text-white/40 mt-2">Pre-Seed</p>
+        <p className="text-lg sm:text-xl text-white/40 mt-1">Pre-Seed at $5M post-money</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-sm sm:text-base">
+      <div className="grid grid-cols-3 gap-3 sm:gap-6 text-xs sm:text-sm">
         <div>
-          <p className="text-white/40 text-xs sm:text-sm mb-3 sm:mb-4">USE OF FUNDS</p>
-          <div className="space-y-2">
-            <div className="flex justify-between"><span>Product</span><span className="text-white/40">40%</span></div>
-            <div className="flex justify-between"><span>Engineering</span><span className="text-white/40">40%</span></div>
-            <div className="flex justify-between"><span>Growth</span><span className="text-white/40">20%</span></div>
+          <p className="text-white/40 mb-2 sm:mb-3">USE OF FUNDS</p>
+          <div className="space-y-1 text-white/70">
+            <div className="flex justify-between"><span>Engineering</span><span>55%</span></div>
+            <div className="flex justify-between"><span>Growth</span><span>25%</span></div>
+            <div className="flex justify-between"><span>Operations</span><span>20%</span></div>
+          </div>
+          <p className="text-white/40 mt-3 text-xs">15-month runway</p>
+        </div>
+        <div>
+          <p className="text-white/40 mb-2 sm:mb-3">MILESTONES</p>
+          <div className="space-y-1 text-white/70">
+            <div><span className="text-white/40">M3:</span> 500 customers, $25K MRR</div>
+            <div><span className="text-white/40">M6:</span> 1,500 customers, $75K MRR</div>
+            <div><span className="text-white/40">M9:</span> 3,000 customers, $150K MRR</div>
+            <div><span className="text-white/40">M12:</span> Series A ready, $1M ARR</div>
           </div>
         </div>
         <div>
-          <p className="text-white/40 text-xs sm:text-sm mb-3 sm:mb-4">MILESTONES</p>
-          <div className="space-y-2">
-            <div className="flex justify-between"><span>Month 3</span><span className="text-white/40">1K users</span></div>
-            <div className="flex justify-between"><span>Month 6</span><span className="text-white/40">$50K MRR</span></div>
-            <div className="flex justify-between"><span>Month 12</span><span className="text-white/40">Series A</span></div>
+          <p className="text-white/40 mb-2 sm:mb-3">WHY NOW</p>
+          <div className="space-y-2 text-white/70">
+            <p>2,847 signups in 3 weeks, $0 spent</p>
+            <p>AI makes this possible now</p>
+            <p>Cold outreach is dying</p>
+            <p className="text-emerald-400">First mover wins</p>
           </div>
-        </div>
-        <div>
-          <p className="text-white/40 text-xs sm:text-sm mb-3 sm:mb-4">WHY NOW</p>
-          <ul className="space-y-2 text-white/70">
-            <li>AI makes research 10x cheaper</li>
-            <li>Cold outreach declining fast</li>
-            <li>No one owns this category</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -557,7 +604,7 @@ function S_Close() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl sm:text-5xl md:text-7xl font-light leading-tight"
+        className="text-2xl sm:text-4xl md:text-5xl font-light leading-tight mb-8 sm:mb-12"
       >
         The path to anyone<br />
         <span className="text-white/30">shouldn't be cold.</span>
@@ -565,11 +612,22 @@ function S_Close() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-10 sm:mt-16"
+        transition={{ delay: 0.3 }}
       >
-        <div className="text-4xl sm:text-6xl font-mono">[know]</div>
-        <p className="text-white/40 mt-4 text-sm sm:text-base">useknow.io</p>
+        <div className="text-4xl sm:text-6xl font-mono mb-4">[know]</div>
+        <p className="text-white/40 mb-8">useknow.io</p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-12 text-sm sm:text-base">
+          <div>
+            <p className="text-white">Satyam Dave</p>
+            <p className="text-white/40">CEO & Co-founder</p>
+            <p className="text-emerald-400">satyam@useknow.io</p>
+          </div>
+          <div>
+            <p className="text-white">Udaya Vijay Anand</p>
+            <p className="text-white/40">CTO & Co-founder</p>
+            <p className="text-emerald-400">udaya@useknow.io</p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
