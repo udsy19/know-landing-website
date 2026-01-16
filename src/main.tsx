@@ -41,15 +41,31 @@ function ConvexWrapper({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-// Check if this is the first visit in this session
-const hasSeenAnimation = sessionStorage.getItem("know-intro-seen") === "true";
+// Safe sessionStorage access (can fail in some in-app browsers)
+function getSessionStorage(key: string): string | null {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function setSessionStorage(key: string, value: string): void {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // Silently fail if storage is unavailable
+  }
+}
 
 function AppWithAnimation() {
-  const [showAnimation, setShowAnimation] = useState(!hasSeenAnimation);
+  const [showAnimation, setShowAnimation] = useState(() => {
+    return getSessionStorage("know-intro-seen") !== "true";
+  });
   const location = useLocation();
 
   const handleAnimationComplete = useCallback(() => {
-    sessionStorage.setItem("know-intro-seen", "true");
+    setSessionStorage("know-intro-seen", "true");
     setShowAnimation(false);
   }, []);
 
