@@ -101,9 +101,9 @@ export default function PitchDeck() {
         </svg>
       </button>
 
-      {/* Slide container - 16:9 aspect ratio */}
-      <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-8">
-        <div className="w-full max-w-6xl aspect-video bg-black rounded-lg overflow-hidden relative flex items-center justify-center px-6 sm:px-12 md:px-20 py-8 sm:py-12">
+      {/* Slide container - full screen on mobile, 16:9 on desktop */}
+      <div className="min-h-screen flex items-center justify-center px-12 sm:px-16 md:px-8 py-16 sm:py-8">
+        <div className="w-full max-w-6xl md:aspect-video bg-black rounded-lg overflow-visible relative flex items-center justify-center md:px-20 md:py-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={slide}
