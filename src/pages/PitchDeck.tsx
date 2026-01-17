@@ -1,5 +1,36 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+
+// Animated counter that increments from start to end
+function AnimatedCounter({ end, duration = 2, start = 0 }: { end: number; duration?: number; start?: number }) {
+  const [count, setCount] = useState(start);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!inView) return;
+
+    const startTime = Date.now();
+    const diff = end - start;
+
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      // Ease out cubic for smooth deceleration
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(start + diff * eased));
+
+      if (progress >= 1) {
+        clearInterval(timer);
+        setCount(end);
+      }
+    }, 16);
+
+    return () => clearInterval(timer);
+  }, [inView, end, start, duration]);
+
+  return <span ref={ref}>{count.toLocaleString()}</span>;
+}
 
 // YC-ready pitch deck for [know]
 
@@ -433,7 +464,7 @@ function S_Traction() {
     <div className="text-center">
       <p className="text-white/40 text-sm sm:text-base mb-6 sm:mb-8">TRACTION</p>
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-5xl sm:text-7xl md:text-8xl font-light mb-2">
-        2,847
+        <AnimatedCounter end={2847} start={2000} duration={2.5} />
       </motion.div>
       <p className="text-lg sm:text-xl text-white/60 mb-1">waitlist signups in 21 days</p>
       <p className="text-emerald-400 text-sm sm:text-base mb-6">$0 marketing spend · 100% organic</p>
