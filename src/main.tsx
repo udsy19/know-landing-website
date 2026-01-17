@@ -22,6 +22,7 @@ const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const Privacy = lazy(() => import("./pages/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/Terms.tsx"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck.tsx"));
+const PitchDeckPrint = lazy(() => import("./pages/PitchDeckPrint.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 // Simple loading fallback for route transitions
@@ -85,6 +86,7 @@ function AppWithAnimation() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/pitch" element={<PitchDeck />} />
+          <Route path="/pitch/print" element={<PitchDeckPrint />} />
           <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
