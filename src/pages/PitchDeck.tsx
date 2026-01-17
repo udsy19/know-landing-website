@@ -493,7 +493,7 @@ function S_Traction() {
         </div>
         <div>
           <p className="text-white/40 mb-1">Public beta</p>
-          <p>Jan 27 launch</p>
+          <p>March 15 launch</p>
         </div>
         <div>
           <p className="text-white/40 mb-1">Pipeline</p>
