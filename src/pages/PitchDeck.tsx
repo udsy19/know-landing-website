@@ -620,14 +620,13 @@ function S_Close() {
           <div>
             <p className="text-white">Satyam Dave</p>
             <p className="text-white/40">CEO & Co-founder</p>
-            <p className="text-emerald-400">satyam@useknow.io</p>
           </div>
           <div>
             <p className="text-white">Udaya Vijay Anand</p>
             <p className="text-white/40">CTO & Co-founder</p>
-            <p className="text-emerald-400">udaya@useknow.io</p>
           </div>
         </div>
+        <p className="text-emerald-400 mt-6 text-lg">founders@useknow.io</p>
       </motion.div>
     </div>
   );
