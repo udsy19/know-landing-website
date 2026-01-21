@@ -281,38 +281,43 @@ export default function PitchDeckPrint() {
       <div className="min-h-screen flex items-center p-16 page-break">
         <div className="max-w-4xl w-full">
           <p className="text-white/40 text-base mb-6">COMPETITION</p>
-          <h1 className="text-3xl font-light mb-8">
+          <h1 className="text-3xl font-light mb-6">
             We're not competing. <span className="text-white/40">We're creating.</span>
           </h1>
-          <div className="space-y-4 text-sm">
-            <div className="grid grid-cols-3 gap-4 py-3 border-b border-white/10 text-white/40">
+          <div className="space-y-3 text-sm">
+            <div className="grid grid-cols-3 gap-4 py-2 border-b border-white/10 text-white/40">
               <span></span>
               <span>THEM</span>
               <span className="text-emerald-400">[KNOW]</span>
             </div>
-            <div className="grid grid-cols-3 gap-4 py-3 border-b border-white/10">
+            <div className="grid grid-cols-3 gap-4 py-2 border-b border-white/10">
               <span className="text-white/70">LinkedIn Sales Nav</span>
-              <span className="text-white/40">Searches their 1B user database</span>
+              <span className="text-white/40">Searches their database, not yours</span>
               <span className="text-emerald-400">Searches YOUR relationships</span>
             </div>
-            <div className="grid grid-cols-3 gap-4 py-3 border-b border-white/10">
+            <div className="grid grid-cols-3 gap-4 py-2 border-b border-white/10">
               <span className="text-white/70">ZoomInfo / Apollo</span>
-              <span className="text-white/40">Sells contact data for strangers</span>
+              <span className="text-white/40">Sells contact data for cold outreach</span>
               <span className="text-emerald-400">Finds warm intro paths instantly</span>
             </div>
-            <div className="grid grid-cols-3 gap-4 py-3 border-b border-white/10">
+            <div className="grid grid-cols-3 gap-4 py-2 border-b border-white/10">
+              <span className="text-white/70">Pally (YC W24)</span>
+              <span className="text-white/40">Manual starring & tagging required</span>
+              <span className="text-emerald-400">Zero setup, instant results</span>
+            </div>
+            <div className="grid grid-cols-3 gap-4 py-2 border-b border-white/10">
+              <span className="text-white/70">Happenstance (YC W24)</span>
+              <span className="text-white/40">Team-focused, Slack-dependent</span>
+              <span className="text-emerald-400">Individual-first, works anywhere</span>
+            </div>
+            <div className="grid grid-cols-3 gap-4 py-2 border-b border-white/10">
               <span className="text-white/70">Affinity</span>
               <span className="text-white/40">$500/seat enterprise CRM</span>
               <span className="text-emerald-400">$30/mo consumer product</span>
             </div>
-            <div className="grid grid-cols-3 gap-4 py-3 border-b border-white/10">
-              <span className="text-white/70">Pally/Clay</span>
-              <span className="text-white/40">Tracks relationships manually</span>
-              <span className="text-emerald-400">AI-powered, 0.8s results</span>
-            </div>
           </div>
-          <p className="text-white/60 mt-8 text-center">
-            They sell data about strangers. <span className="text-white">We reveal relationships you already have.</span>
+          <p className="text-white/60 mt-6 text-center">
+            Privacy-first (metadata only). <span className="text-white">Sub-second search. Network effects.</span>
           </p>
         </div>
       </div>
@@ -543,26 +548,123 @@ export default function PitchDeckPrint() {
         </div>
       </div>
 
-      {/* Slide 13: Close */}
+      {/* Slide 13: Future Outlook */}
+      <div className="min-h-screen flex items-center p-12 page-break">
+        <div className="max-w-5xl w-full">
+          <p className="text-white/40 text-base mb-2">FUTURE OUTLOOK</p>
+          <p className="text-white/60 text-sm mb-6">What happens as we scale — backed by network science</p>
+
+          <div className="space-y-4">
+            {/* 1K Users */}
+            <div className="bg-gradient-to-r from-emerald-400/20 to-emerald-400/5 rounded-lg p-4 border border-emerald-400/20">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-light text-white">1,000</span>
+                  <span className="text-white/40 text-sm">users</span>
+                </div>
+                <span className="text-emerald-400 text-sm font-medium">Month 3</span>
+              </div>
+              <div className="grid grid-cols-3 gap-6 text-xs">
+                <div>
+                  <p className="text-white/40 mb-1">FINANCIAL</p>
+                  <p className="text-white/70">MRR: <span className="text-white">$15K</span> · ARR: <span className="text-white">$180K</span> · Est. Val: <span className="text-emerald-400">~$2M</span></p>
+                </div>
+                <div>
+                  <p className="text-white/40 mb-1">NETWORK EFFECT</p>
+                  <p className="text-white/70">2° Reach: <span className="text-white">930K people</span> · Match Rate: <span className="text-white">73%</span></p>
+                </div>
+                <div>
+                  <p className="text-white/40 mb-1">UNLOCKS</p>
+                  <p className="text-white/70">PMF validation · First enterprise pilots · Referral loop activated</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 10K Users */}
+            <div className="bg-gradient-to-r from-emerald-400/40 to-emerald-400/10 rounded-lg p-4 border border-emerald-400/20">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-light text-white">10,000</span>
+                  <span className="text-white/40 text-sm">users</span>
+                </div>
+                <span className="text-emerald-400 text-sm font-medium">Month 9</span>
+              </div>
+              <div className="grid grid-cols-3 gap-6 text-xs">
+                <div>
+                  <p className="text-white/40 mb-1">FINANCIAL</p>
+                  <p className="text-white/70">MRR: <span className="text-white">$90K</span> · ARR: <span className="text-white">$1.08M</span> · Est. Val: <span className="text-emerald-400">~$10M</span></p>
+                </div>
+                <div>
+                  <p className="text-white/40 mb-1">NETWORK EFFECT</p>
+                  <p className="text-white/70">2° Reach: <span className="text-white">9.3M people</span> · Match Rate: <span className="text-white">94%</span></p>
+                </div>
+                <div>
+                  <p className="text-white/40 mb-1">UNLOCKS</p>
+                  <p className="text-white/70">Giant component formed · Series A ready · Team features launch</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 50K Users */}
+            <div className="bg-gradient-to-r from-emerald-400/60 to-emerald-400/20 rounded-lg p-4 border border-emerald-400/20">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-light text-white">50,000</span>
+                  <span className="text-white/40 text-sm">users</span>
+                </div>
+                <span className="text-emerald-400 text-sm font-medium">Month 18</span>
+              </div>
+              <div className="grid grid-cols-3 gap-6 text-xs">
+                <div>
+                  <p className="text-white/40 mb-1">FINANCIAL</p>
+                  <p className="text-white/70">MRR: <span className="text-white">$450K</span> · ARR: <span className="text-white">$5.4M</span> · Est. Val: <span className="text-emerald-400">~$50M</span></p>
+                </div>
+                <div>
+                  <p className="text-white/40 mb-1">NETWORK EFFECT</p>
+                  <p className="text-white/70">2° Reach: <span className="text-white">46.5M people</span> · Match Rate: <span className="text-white">99%+</span></p>
+                </div>
+                <div>
+                  <p className="text-white/40 mb-1">UNLOCKS</p>
+                  <p className="text-white/70">Near-universal coverage · Enterprise dominant · Platform ecosystem</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 text-center">
+            <p className="text-sm text-white/50">
+              Network value grows <span className="text-emerald-400">n²</span> (Metcalfe's Law) — validated by Tencent/Facebook data
+            </p>
+            <p className="text-[9px] text-white/30 mt-1">
+              Zhang et al. 2015 · Giant component threshold: Erdős-Rényi · Avg 930 connections/user: LinkedIn 2024
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Slide 14: Close */}
       <div className="min-h-screen flex items-center justify-center p-16 page-break">
         <div className="text-center">
-          <div className="text-5xl font-light leading-tight mb-14">
+          <div className="text-5xl font-light leading-tight mb-12">
             The path to anyone<br />
             <span className="text-white/30">shouldn't be cold.</span>
           </div>
-          <div className="text-6xl font-mono mb-6">[know]</div>
-          <p className="text-white/40 mb-10">useknow.io</p>
-          <div className="flex justify-center gap-16">
+          <div className="text-6xl font-mono mb-4">[know]</div>
+          <p className="text-white/40 mb-8">useknow.io</p>
+          <div className="flex justify-center gap-16 mb-4">
             <div>
               <p className="text-white">Satyam Dave</p>
-              <p className="text-white/40">CEO & Co-founder</p>
+              <p className="text-white/40 text-sm">CEO & Co-founder</p>
+              <p className="text-blue-400 text-xs">linkedin.com/in/satyamvdave</p>
             </div>
             <div>
               <p className="text-white">Udaya Vijay Anand</p>
-              <p className="text-white/40">CTO & Co-founder</p>
+              <p className="text-white/40 text-sm">CTO & Co-founder</p>
+              <p className="text-blue-400 text-xs">linkedin.com/in/udaya-vijay-anand</p>
             </div>
           </div>
-          <p className="text-emerald-400 mt-8 text-lg">founders@useknow.io</p>
+          <p className="text-emerald-400 text-lg">founders@useknow.io</p>
+          <p className="text-blue-400 text-xs mt-2">linkedin.com/company/useknow</p>
         </div>
       </div>
 

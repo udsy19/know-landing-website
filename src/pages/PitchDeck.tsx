@@ -45,7 +45,7 @@ function Citation({ children }: { children: React.ReactNode }) {
 
 export default function PitchDeck() {
   const [slide, setSlide] = useState(0);
-  const totalSlides = 14; // Added budget breakdown + references slides
+  const totalSlides = 15; // Added future outlook slide
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
@@ -188,8 +188,9 @@ function Slide({ index }: { index: number }) {
     case 9: return <S_Team />;
     case 10: return <S_Ask />;
     case 11: return <S_BudgetBreakdown />;
-    case 12: return <S_Close />;
-    case 13: return <S_References />;
+    case 12: return <S_FutureOutlook />;
+    case 13: return <S_Close />;
+    case 14: return <S_References />;
     default: return null;
   }
 }
@@ -535,27 +536,28 @@ function S_Competition() {
   return (
     <div className="relative pb-8">
       <p className="text-white/40 text-sm sm:text-base mb-4 sm:mb-6">COMPETITION</p>
-      <h1 className="text-xl sm:text-3xl font-light mb-6">
+      <h1 className="text-xl sm:text-3xl font-light mb-4">
         We're not competing. <span className="text-white/40">We're creating.</span>
       </h1>
-      <div className="space-y-3 text-xs sm:text-sm">
+      <div className="space-y-2 text-[10px] sm:text-xs">
         <div className="grid grid-cols-3 gap-2 py-2 border-b border-white/10 text-white/40">
           <span></span>
           <span>THEM</span>
           <span className="text-emerald-400">[KNOW]</span>
         </div>
         {[
-          { name: "LinkedIn Sales Nav", them: "Searches their 1B user database", us: "Searches YOUR relationships" },
-          { name: "ZoomInfo / Apollo", them: "Sells contact data for strangers", us: "Finds warm intro paths instantly" },
+          { name: "LinkedIn Sales Nav", them: "Searches their database, not yours", us: "Searches YOUR relationships" },
+          { name: "ZoomInfo / Apollo", them: "Sells contact data for cold outreach", us: "Finds warm intro paths instantly" },
+          { name: "Pally (YC W24)", them: "Manual starring & tagging required", us: "Zero setup, instant results" },
+          { name: "Happenstance (YC W24)", them: "Team-focused, Slack-dependent", us: "Individual-first, works anywhere" },
           { name: "Affinity", them: "$500/seat enterprise CRM", us: "$30/mo consumer product" },
-          { name: "Clay / Pally", them: "Tracks relationships manually", us: "AI-powered, sub-second results" },
         ].map((row, i) => (
           <motion.div
             key={row.name}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 + i * 0.1 }}
-            className="grid grid-cols-3 gap-2 py-2 border-b border-white/10"
+            transition={{ delay: 0.1 + i * 0.08 }}
+            className="grid grid-cols-3 gap-2 py-1.5 border-b border-white/10"
           >
             <span className="text-white/70">{row.name}</span>
             <span className="text-white/40">{row.them}</span>
@@ -567,9 +569,9 @@ function S_Competition() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
-        className="text-sm sm:text-base text-white/60 mt-6 text-center"
+        className="text-xs sm:text-sm text-white/60 mt-4 text-center"
       >
-        They find strangers. <span className="text-white">We surface your warmest paths.</span>
+        Privacy-first (metadata only). <span className="text-white">Sub-second search. Network effects.</span>
       </motion.p>
     </div>
   );
@@ -845,13 +847,117 @@ function S_BudgetBreakdown() {
   );
 }
 
+function S_FutureOutlook() {
+  const milestones = [
+    {
+      users: "1,000",
+      timeline: "Month 3",
+      color: "from-emerald-400/20 to-emerald-400/5",
+      financial: { mrr: "$15K", arr: "$180K", valuation: "~$2M" },
+      network: { reach: "930K people", coverage: "73%", paths: "1M+" },
+      unlocks: ["Product-market fit validation", "First enterprise pilots", "Referral loop activated"]
+    },
+    {
+      users: "10,000",
+      timeline: "Month 9",
+      color: "from-emerald-400/40 to-emerald-400/10",
+      financial: { mrr: "$90K", arr: "$1.08M", valuation: "~$10M" },
+      network: { reach: "9.3M people", coverage: "94%", paths: "50M+" },
+      unlocks: ["Giant component formed", "Series A ready", "Team features launch"]
+    },
+    {
+      users: "50,000",
+      timeline: "Month 18",
+      color: "from-emerald-400/60 to-emerald-400/20",
+      financial: { mrr: "$450K", arr: "$5.4M", valuation: "~$50M" },
+      network: { reach: "46.5M people", coverage: "99%+", paths: "500M+" },
+      unlocks: ["Near-universal coverage", "Enterprise dominant", "Platform ecosystem"]
+    }
+  ];
+
+  return (
+    <div className="relative pb-8">
+      <p className="text-white/40 text-sm sm:text-base mb-2">FUTURE OUTLOOK</p>
+      <p className="text-white/60 text-xs sm:text-sm mb-4">What happens as we scale — backed by network science</p>
+
+      <div className="space-y-3">
+        {milestones.map((m, i) => (
+          <motion.div
+            key={m.users}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 + i * 0.15 }}
+            className={`bg-gradient-to-r ${m.color} rounded-lg p-3 sm:p-4 border border-emerald-400/20`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <span className="text-xl sm:text-2xl font-light text-white">{m.users}</span>
+                <span className="text-white/40 text-xs">users</span>
+              </div>
+              <span className="text-emerald-400 text-xs sm:text-sm font-medium">{m.timeline}</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-[9px] sm:text-[10px]">
+              {/* Financial */}
+              <div>
+                <p className="text-white/40 mb-1">FINANCIAL</p>
+                <div className="space-y-0.5 text-white/70">
+                  <p>MRR: <span className="text-white">{m.financial.mrr}</span></p>
+                  <p>ARR: <span className="text-white">{m.financial.arr}</span></p>
+                  <p>Est. Val: <span className="text-emerald-400">{m.financial.valuation}</span></p>
+                </div>
+              </div>
+
+              {/* Network */}
+              <div>
+                <p className="text-white/40 mb-1">NETWORK EFFECT</p>
+                <div className="space-y-0.5 text-white/70">
+                  <p>2° Reach: <span className="text-white">{m.network.reach}</span></p>
+                  <p>Match Rate: <span className="text-white">{m.network.coverage}</span></p>
+                  <p>Paths: <span className="text-white">{m.network.paths}</span></p>
+                </div>
+              </div>
+
+              {/* Unlocks */}
+              <div>
+                <p className="text-white/40 mb-1">UNLOCKS</p>
+                <div className="space-y-0.5 text-white/70">
+                  {m.unlocks.map((u, j) => (
+                    <p key={j} className="flex items-center gap-1">
+                      <span className="text-emerald-400">→</span> {u}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="mt-3 text-center"
+      >
+        <p className="text-xs sm:text-sm text-white/50">
+          Network value grows <span className="text-emerald-400">n²</span> (Metcalfe's Law) — validated by Tencent/Facebook data
+        </p>
+        <p className="text-[8px] sm:text-[9px] text-white/30 mt-1">
+          Zhang et al. 2015 · Giant component threshold: Erdős-Rényi · Avg 930 connections/user: LinkedIn 2024
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
 function S_Close() {
   return (
     <div className="text-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl sm:text-4xl md:text-5xl font-light leading-tight mb-8 sm:mb-12"
+        className="text-2xl sm:text-4xl md:text-5xl font-light leading-tight mb-6 sm:mb-10"
       >
         The path to anyone<br />
         <span className="text-white/30">shouldn't be cold.</span>
@@ -861,19 +967,49 @@ function S_Close() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="text-4xl sm:text-6xl font-mono mb-4">[know]</div>
-        <p className="text-white/40 mb-8">useknow.io</p>
-        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-12 text-sm sm:text-base">
+        <div className="text-4xl sm:text-6xl font-mono mb-3">[know]</div>
+        <p className="text-white/40 mb-6">useknow.io</p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-10 text-sm sm:text-base mb-4">
           <div>
             <p className="text-white">Satyam Dave</p>
-            <p className="text-white/40">CEO & Co-founder</p>
+            <p className="text-white/40 text-xs">CEO & Co-founder</p>
+            <a
+              href="https://www.linkedin.com/in/satyamvdave/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-blue-400 hover:text-blue-300 text-xs"
+            >
+              LinkedIn →
+            </a>
           </div>
           <div>
             <p className="text-white">Udaya Vijay Anand</p>
-            <p className="text-white/40">CTO & Co-founder</p>
+            <p className="text-white/40 text-xs">CTO & Co-founder</p>
+            <a
+              href="https://www.linkedin.com/in/udaya-vijay-anand/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-blue-400 hover:text-blue-300 text-xs"
+            >
+              LinkedIn →
+            </a>
           </div>
         </div>
-        <p className="text-emerald-400 mt-6 text-lg">founders@useknow.io</p>
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-emerald-400 text-lg">founders@useknow.io</p>
+          <a
+            href="https://www.linkedin.com/company/useknow/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
+          >
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            Follow [know] on LinkedIn
+          </a>
+        </div>
       </motion.div>
     </div>
   );
