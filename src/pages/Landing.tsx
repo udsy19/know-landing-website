@@ -1558,12 +1558,9 @@ export default function Landing() {
               <Link to="/terms" className="hover:text-foreground transition-colors">
                 Terms of Service
               </Link>
-              <a
-                href="mailto:hello@useknow.io"
-                className="hover:text-foreground transition-colors"
-              >
+              <Link to="/contact" className="hover:text-foreground transition-colors">
                 Contact
-              </a>
+              </Link>
             </div>
 
             {/* Copyright */}
