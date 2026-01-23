@@ -1,13 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Client } from "@notionhq/client";
-import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
 
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-});
-
-const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID!;
+const NOTION_API_KEY = process.env.NOTION_API_KEY;
+const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
 // Allowed origins for CORS
 const ALLOWED_ORIGINS = [
@@ -23,6 +17,12 @@ const ALLOWED_ORIGINS = [
 let cachedCount: number | null = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 60 * 1000; // 60 seconds
+
+interface NotionQueryResponse {
+  results: unknown[];
+  has_more: boolean;
+  next_cursor: string | null;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS headers with origin validation
@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Check if Notion is configured
-    if (!process.env.NOTION_API_KEY || !NOTION_DATABASE_ID) {
+    if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
       // Return a default count if not configured
       return res.status(200).json({ count: 2847 });
     }
@@ -55,26 +55,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ count: cachedCount, cached: true });
     }
 
-    // Query Notion database to get count
+    // Query Notion database to get count using direct API call
     let count = 0;
     let hasMore = true;
     let startCursor: string | undefined = undefined;
 
     while (hasMore) {
-      const queryParams: QueryDatabaseParameters = {
-        database_id: NOTION_DATABASE_ID,
+      const body: { page_size: number; start_cursor?: string } = {
         page_size: 100,
       };
 
       if (startCursor) {
-        queryParams.start_cursor = startCursor;
+        body.start_cursor = startCursor;
       }
 
-      const response = await notion.databases.query(queryParams);
+      const response = await fetch(
+        `https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${NOTION_API_KEY}`,
+            "Content-Type": "application/json",
+            "Notion-Version": "2022-06-28",
+          },
+          body: JSON.stringify(body),
+        }
+      );
 
-      count += response.results.length;
-      hasMore = response.has_more;
-      startCursor = response.next_cursor || undefined;
+      if (!response.ok) {
+        throw new Error(`Notion API error: ${response.status}`);
+      }
+
+      const data: NotionQueryResponse = await response.json();
+
+      count += data.results.length;
+      hasMore = data.has_more;
+      startCursor = data.next_cursor || undefined;
     }
 
     // Add a base number to make it look more impressive
