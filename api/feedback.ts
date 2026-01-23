@@ -126,7 +126,7 @@ async function storeInNotion(entry: FeedbackEntry, ip: string) {
       Message: {
         rich_text: [{ text: { content: entry.message } }],
       },
-      "Submitted At": {
+      "Submitted": {
         date: { start: timestamp },
       },
       "IP Address": {
