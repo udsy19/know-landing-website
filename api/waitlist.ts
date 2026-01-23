@@ -190,7 +190,8 @@ async function storeInNotion(entry: WaitlistEntry, ip: string) {
   const timestamp = new Date().toISOString();
 
   // Base properties (required columns)
-  const properties: Record<string, unknown> = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const properties: any = {
     Name: {
       title: [{ text: { content: entry.name } }],
     },

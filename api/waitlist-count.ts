@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Client } from "@notionhq/client";
+import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
 
 // Initialize Notion client
 const notion = new Client({
@@ -60,18 +61,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let startCursor: string | undefined = undefined;
 
     while (hasMore) {
-      const response = await notion.databases.query({
+      const queryParams: QueryDatabaseParameters = {
         database_id: NOTION_DATABASE_ID,
-        start_cursor: startCursor,
         page_size: 100,
-      });
+      };
+
+      if (startCursor) {
+        queryParams.start_cursor = startCursor;
+      }
+
+      const response = await notion.databases.query(queryParams);
 
       count += response.results.length;
       hasMore = response.has_more;
       startCursor = response.next_cursor || undefined;
     }
 
-    // Add a base number to make it look more impressive (optional - remove if you want exact count)
+    // Add a base number to make it look more impressive
     const displayCount = count + 2800;
 
     // Update cache
