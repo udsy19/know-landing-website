@@ -27,6 +27,7 @@ export default function Landing() {
   const [waitlistStatus, setWaitlistStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [waitlistMessage, setWaitlistMessage] = useState("");
   const [waitlistCount, setWaitlistCount] = useState(2847);
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
 
   // Fetch waitlist count on mount
   useEffect(() => {
@@ -1208,9 +1209,40 @@ export default function Landing() {
         className="container mx-auto px-6 py-24 max-w-5xl border-t border-border/40"
       >
         <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-4 text-center">Pricing</h2>
-        <p className="text-center text-muted-foreground text-sm mb-12">Start free, upgrade when you're ready</p>
+        <p className="text-center text-muted-foreground text-sm mb-8">Start free, upgrade when you're ready</p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center gap-3 mb-12">
+          <button
+            onClick={() => setBillingPeriod("monthly")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              billingPeriod === "monthly"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setBillingPeriod("annual")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+              billingPeriod === "annual"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Annual
+            <span className={`text-xs px-2 py-0.5 rounded-full ${
+              billingPeriod === "annual"
+                ? "bg-primary-foreground/20 text-primary-foreground"
+                : "bg-emerald-500/10 text-emerald-500"
+            }`}>
+              Save 20%
+            </span>
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
           {/* Free Trial */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -1257,13 +1289,16 @@ export default function Landing() {
             </button>
           </motion.div>
 
-          {/* Pro */}
+          {/* Pro - Featured */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="border-2 border-primary rounded-2xl p-6 bg-background relative"
+            className="border-2 border-primary rounded-2xl p-8 relative lg:scale-105 lg:-my-4 z-10"
+            style={{
+              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 50%, transparent 100%)"
+            }}
           >
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
               Most Popular
@@ -1273,8 +1308,21 @@ export default function Landing() {
               <p className="text-xs text-muted-foreground">For professionals</p>
             </div>
             <div className="mb-6">
-              <span className="text-3xl font-light">$49</span>
-              <span className="text-muted-foreground text-sm">/month</span>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={billingPeriod}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <span className="text-4xl font-light">${billingPeriod === "monthly" ? "49" : "39"}</span>
+                  <span className="text-muted-foreground text-sm">/month</span>
+                  {billingPeriod === "annual" && (
+                    <p className="text-xs text-emerald-500 mt-1">Billed annually ($468/year)</p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
             <ul className="space-y-3 text-sm text-muted-foreground mb-6">
               <li className="flex items-start gap-2">
@@ -1307,7 +1355,7 @@ export default function Landing() {
                 setIsWaitlistOpen(true);
                 document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="w-full py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+              className="w-full py-3 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
             >
               Get Started
             </button>
@@ -1326,8 +1374,21 @@ export default function Landing() {
               <p className="text-xs text-muted-foreground">For power users</p>
             </div>
             <div className="mb-6">
-              <span className="text-3xl font-light">$99</span>
-              <span className="text-muted-foreground text-sm">/month</span>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={billingPeriod}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <span className="text-3xl font-light">${billingPeriod === "monthly" ? "99" : "79"}</span>
+                  <span className="text-muted-foreground text-sm">/month</span>
+                  {billingPeriod === "annual" && (
+                    <p className="text-xs text-emerald-500 mt-1">Billed annually ($948/year)</p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
             <ul className="space-y-3 text-sm text-muted-foreground mb-6">
               <li className="flex items-start gap-2">
