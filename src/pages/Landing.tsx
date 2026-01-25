@@ -1307,19 +1307,28 @@ export default function Landing() {
               <h3 className="font-medium mb-1">Pro</h3>
               <p className="text-xs text-muted-foreground">For professionals</p>
             </div>
-            <div className="mb-6">
+            <div className="mb-6 h-16">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={billingPeriod}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, scale: 0.5, y: -20, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.5, y: 20, filter: "blur(10px)" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
-                  <span className="text-4xl font-light">${billingPeriod === "monthly" ? "49" : "39"}</span>
-                  <span className="text-muted-foreground text-sm">/month</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-light">${billingPeriod === "monthly" ? "49" : "39"}</span>
+                    <span className="text-muted-foreground text-sm">/month</span>
+                  </div>
                   {billingPeriod === "annual" && (
-                    <p className="text-xs text-emerald-500 mt-1">Billed annually ($468/year)</p>
+                    <motion.p
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-xs text-emerald-500 mt-1"
+                    >
+                      Billed annually ($468/year)
+                    </motion.p>
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -1373,19 +1382,28 @@ export default function Landing() {
               <h3 className="font-medium mb-1">Business</h3>
               <p className="text-xs text-muted-foreground">For power users</p>
             </div>
-            <div className="mb-6">
+            <div className="mb-6 h-14">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={billingPeriod}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, scale: 0.5, y: -20, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.5, y: 20, filter: "blur(10px)" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
-                  <span className="text-3xl font-light">${billingPeriod === "monthly" ? "99" : "79"}</span>
-                  <span className="text-muted-foreground text-sm">/month</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-light">${billingPeriod === "monthly" ? "99" : "79"}</span>
+                    <span className="text-muted-foreground text-sm">/month</span>
+                  </div>
                   {billingPeriod === "annual" && (
-                    <p className="text-xs text-emerald-500 mt-1">Billed annually ($948/year)</p>
+                    <motion.p
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-xs text-emerald-500 mt-1"
+                    >
+                      Billed annually ($948/year)
+                    </motion.p>
                   )}
                 </motion.div>
               </AnimatePresence>
