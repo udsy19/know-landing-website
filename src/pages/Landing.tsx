@@ -1322,7 +1322,7 @@ export default function Landing() {
                   </div>
                   {billingPeriod === "annual" && (
                     <p className="text-xs text-emerald-500 mt-1">
-                      Billed annually ($468/year)
+                      $468/year · Save $120
                     </p>
                   )}
                 </motion.div>
@@ -1392,7 +1392,7 @@ export default function Landing() {
                   </div>
                   {billingPeriod === "annual" && (
                     <p className="text-xs text-emerald-500 mt-1">
-                      Billed annually ($948/year)
+                      $948/year · Save $240
                     </p>
                   )}
                 </motion.div>
