@@ -1205,12 +1205,227 @@ export default function Landing() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.6 }}
-        className="container mx-auto px-6 py-24 max-w-3xl border-t border-border/40"
+        className="container mx-auto px-6 py-24 max-w-5xl border-t border-border/40"
       >
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-12">Pricing</h2>
-        <div className="space-y-2">
-          <p className="text-4xl md:text-5xl font-light tracking-tight">$29 / month</p>
-          <p className="text-muted-foreground font-light text-lg">Unlimited searches. Full research reports. All connections.</p>
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-4 text-center">Pricing</h2>
+        <p className="text-center text-muted-foreground text-sm mb-12">Start free, upgrade when you're ready</p>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Free Trial */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="border border-border/50 rounded-2xl p-6 bg-background"
+          >
+            <div className="mb-6">
+              <h3 className="font-medium mb-1">Free Trial</h3>
+              <p className="text-xs text-muted-foreground">No credit card required</p>
+            </div>
+            <div className="mb-6">
+              <span className="text-3xl font-light">14 days</span>
+            </div>
+            <ul className="space-y-3 text-sm text-muted-foreground mb-6">
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Full access to all features
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Unlimited searches
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Connect all data sources
+              </li>
+            </ul>
+            <button
+              onClick={() => {
+                setIsWaitlistOpen(true);
+                document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full py-2.5 border border-border rounded-full text-sm font-medium hover:bg-muted/50 transition-colors"
+            >
+              Start Free Trial
+            </button>
+          </motion.div>
+
+          {/* Pro */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="border-2 border-primary rounded-2xl p-6 bg-background relative"
+          >
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+              Most Popular
+            </div>
+            <div className="mb-6">
+              <h3 className="font-medium mb-1">Pro</h3>
+              <p className="text-xs text-muted-foreground">For professionals</p>
+            </div>
+            <div className="mb-6">
+              <span className="text-3xl font-light">$49</span>
+              <span className="text-muted-foreground text-sm">/month</span>
+            </div>
+            <ul className="space-y-3 text-sm text-muted-foreground mb-6">
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Unlimited searches
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Deep research reports
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Meeting scheduling
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                AI message drafting
+              </li>
+            </ul>
+            <button
+              onClick={() => {
+                setIsWaitlistOpen(true);
+                document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              Get Started
+            </button>
+          </motion.div>
+
+          {/* Business */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="border border-border/50 rounded-2xl p-6 bg-background"
+          >
+            <div className="mb-6">
+              <h3 className="font-medium mb-1">Business</h3>
+              <p className="text-xs text-muted-foreground">For power users</p>
+            </div>
+            <div className="mb-6">
+              <span className="text-3xl font-light">$99</span>
+              <span className="text-muted-foreground text-sm">/month</span>
+            </div>
+            <ul className="space-y-3 text-sm text-muted-foreground mb-6">
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Everything in Pro
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Bulk search (50 at once)
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Export to CSV / CRM
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                API access
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Verified data badges
+              </li>
+            </ul>
+            <button
+              onClick={() => {
+                setIsWaitlistOpen(true);
+                document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full py-2.5 border border-border rounded-full text-sm font-medium hover:bg-muted/50 transition-colors"
+            >
+              Get Started
+            </button>
+          </motion.div>
+
+          {/* Enterprise */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="border border-border/50 rounded-2xl p-6 bg-muted/20"
+          >
+            <div className="mb-6">
+              <h3 className="font-medium mb-1">Enterprise</h3>
+              <p className="text-xs text-muted-foreground">For teams & orgs</p>
+            </div>
+            <div className="mb-6">
+              <span className="text-3xl font-light">Custom</span>
+            </div>
+            <ul className="space-y-3 text-sm text-muted-foreground mb-6">
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Everything in Business
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Team accounts
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                SSO / SAML
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Custom integrations
+              </li>
+              <li className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Dedicated support
+              </li>
+            </ul>
+            <Link
+              to="/contact"
+              className="block w-full py-2.5 border border-border rounded-full text-sm font-medium hover:bg-muted/50 transition-colors text-center"
+            >
+              Contact Us
+            </Link>
+          </motion.div>
         </div>
       </motion.section>
 
