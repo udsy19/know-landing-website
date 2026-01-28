@@ -22,6 +22,7 @@ const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const Privacy = lazy(() => import("./pages/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/Terms.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
+const Pricing = lazy(() => import("./pages/Pricing.tsx"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck.tsx"));
 const PitchDeckPrint = lazy(() => import("./pages/PitchDeckPrint.tsx"));
 const InstagramStories = lazy(() => import("./pages/InstagramStories.tsx"));
@@ -88,6 +89,7 @@ function AppWithAnimation() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="/pitch" element={<PitchDeck />} />
           <Route path="/pitch/print" element={<PitchDeckPrint />} />
           <Route path="/stories" element={<InstagramStories />} />
