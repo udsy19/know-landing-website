@@ -117,12 +117,18 @@ export default function Pricing() {
             [know]
           </Link>
           <nav className="flex items-center gap-6">
-            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Home
+            <Link to="/pricing" className="text-sm text-foreground font-medium">
+              Pricing
             </Link>
-            <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Contact
+            <Link to="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Security
             </Link>
+            <a
+              href="https://app.useknow.io"
+              className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+            >
+              Open App
+            </a>
           </nav>
         </div>
       </header>

@@ -5,19 +5,24 @@ export default function Privacy() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="border-b border-border/40">
-        <div className="container mx-auto px-6 py-6 max-w-4xl flex items-center justify-between">
+        <div className="container mx-auto px-6 py-5 max-w-4xl flex items-center justify-between">
           <Link to="/" className="text-lg font-mono font-medium hover:opacity-70 transition-opacity">
             [know]
           </Link>
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back
-          </Link>
+          <nav className="flex items-center gap-6">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </Link>
+            <Link to="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Security
+            </Link>
+            <a
+              href="https://app.useknow.io"
+              className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+            >
+              Open App
+            </a>
+          </nav>
         </div>
       </header>
 

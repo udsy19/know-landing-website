@@ -19,12 +19,20 @@ export default function App() {
           <Link to="/" className="text-lg font-mono font-medium hover:opacity-70 transition-opacity">
             [know]
           </Link>
-          <Link
-            to="/"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ← Back to Home
-          </Link>
+          <nav className="flex items-center gap-6">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </Link>
+            <Link to="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Security
+            </Link>
+            <a
+              href="https://app.useknow.io"
+              className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+            >
+              Open App
+            </a>
+          </nav>
         </div>
       </header>
 

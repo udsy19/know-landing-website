@@ -110,12 +110,18 @@ export default function Security() {
             [know]
           </Link>
           <nav className="flex items-center gap-6">
-            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Home
-            </Link>
             <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Pricing
             </Link>
+            <Link to="/security" className="text-sm text-foreground font-medium">
+              Security
+            </Link>
+            <a
+              href="https://app.useknow.io"
+              className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+            >
+              Open App
+            </a>
           </nav>
         </div>
       </header>
