@@ -213,8 +213,23 @@ export default function Landing() {
   return (
     <div className="crt min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background flex flex-col items-center overflow-x-hidden">
 
+      {/* Header */}
+      <header className="w-full border-b border-border/40">
+        <div className="container mx-auto px-6 py-5 max-w-4xl flex items-center justify-between">
+          <span className="text-lg font-mono font-medium">[know]</span>
+          <nav className="flex items-center gap-6">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </Link>
+            <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Contact
+            </Link>
+          </nav>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="container mx-auto px-6 pt-32 pb-16 max-w-3xl min-h-[50vh] flex flex-col justify-center">
+      <section className="container mx-auto px-6 pt-20 pb-16 max-w-3xl min-h-[50vh] flex flex-col justify-center">
         <motion.h1
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1864,14 +1879,17 @@ export default function Landing() {
 
             {/* Links */}
             <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-              <Link to="/privacy" className="hover:text-foreground transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="hover:text-foreground transition-colors">
-                Terms of Service
+              <Link to="/pricing" className="hover:text-foreground transition-colors">
+                Pricing
               </Link>
               <Link to="/contact" className="hover:text-foreground transition-colors">
                 Contact
+              </Link>
+              <Link to="/privacy" className="hover:text-foreground transition-colors">
+                Privacy
+              </Link>
+              <Link to="/terms" className="hover:text-foreground transition-colors">
+                Terms
               </Link>
             </div>
 
