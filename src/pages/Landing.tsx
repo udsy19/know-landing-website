@@ -215,7 +215,7 @@ export default function Landing() {
 
       {/* Header */}
       <header className="w-full border-b border-border/40">
-        <div className="container mx-auto px-6 py-5 max-w-4xl flex items-center justify-between">
+        <div className="container mx-auto px-6 py-5 max-w-5xl flex items-center justify-between">
           <span className="text-lg font-mono font-medium">[know]</span>
           <nav className="flex items-center gap-6">
             <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

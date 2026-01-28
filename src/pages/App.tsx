@@ -15,7 +15,7 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
       <header className="border-b border-border/40">
-        <div className="container mx-auto px-6 py-5 max-w-4xl flex items-center justify-between">
+        <div className="container mx-auto px-6 py-5 max-w-5xl flex items-center justify-between">
           <Link to="/" className="text-lg font-mono font-medium hover:opacity-70 transition-opacity">
             [know]
           </Link>
