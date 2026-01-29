@@ -11,11 +11,6 @@ import "./index.css";
 import "./types/global.d.ts";
 import StartupAnimation from "@/components/StartupAnimation";
 
-// Only load VlyToolbar in development (avoids loading snapdom in production)
-const VlyToolbar = import.meta.env.DEV
-  ? lazy(() => import("../vly-toolbar-readonly.tsx").then(m => ({ default: m.VlyToolbar })))
-  : () => null;
-
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
@@ -149,11 +144,6 @@ function RouteSyncer() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {import.meta.env.DEV && (
-      <Suspense fallback={null}>
-        <VlyToolbar />
-      </Suspense>
-    )}
     <InstrumentationProvider>
       <ConvexWrapper>
         <BrowserRouter>
