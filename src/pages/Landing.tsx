@@ -547,6 +547,69 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* The Principle */}
+      <section className="py-32 px-6 border-t border-border/40">
+        <div className="container mx-auto max-w-3xl text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+          >
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-sm font-mono text-muted-foreground mb-8"
+            >
+              The principle
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-2xl md:text-3xl font-light leading-relaxed mb-12"
+            >
+              In any organization, outcomes flow through relationships.
+            </motion.p>
+
+            <div className="space-y-4 mb-12">
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                className="text-lg text-muted-foreground"
+              >
+                Each person adds thousands of new connections.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="text-lg text-muted-foreground"
+              >
+                Each connection creates new paths.
+              </motion.p>
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.7 }}
+              className="text-xl md:text-2xl font-light"
+            >
+              Know maps those paths so teams can use them{" "}
+              <span className="text-primary">intentionally</span>, not accidentally.
+            </motion.p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Use Cases */}
       <section className="py-32 px-6 border-t border-border/40">
         <div className="container mx-auto max-w-5xl">
