@@ -241,16 +241,16 @@ function S_Problem() {
             Manual searching → <span className="text-white/70">10+ hrs/week</span>
           </div>
           <div className="text-white/50">
-            Deals via warm intro → <span className="text-emerald-400">34x more</span>
+            Deals via warm intro → <span className="text-emerald-400">5x more</span>
           </div>
         </div>
       </div>
       <p className="text-lg sm:text-2xl pt-4">
-        Warm intros close <span className="text-emerald-400">34x more deals</span>.
+        Warm intros close <span className="text-emerald-400">5x more deals</span>.
         <br />
         <span className="text-white/50">Teams can't find them at scale.</span>
       </p>
-      <Citation>Sources: Belkins 2025 (2% cold response), GrowLeads (68% warm response), LinkedIn Sales Solutions (34x deal conversion)</Citation>
+      <Citation>Sources: Belkins 2025 (2% cold response), GrowLeads (68% warm response), Martal Group (5x conversion)</Citation>
     </div>
   );
 }
@@ -269,12 +269,12 @@ function S_WhyMatters() {
           <p className="text-white/40 mt-1 sm:mt-2 text-[10px] sm:text-xs">warm intro<br />response rate</p>
         </div>
         <div className="text-center">
-          <div className="text-2xl sm:text-4xl md:text-5xl font-light">$47B</div>
-          <p className="text-white/40 mt-1 sm:mt-2 text-[10px] sm:text-xs">wasted yearly<br />on cold outreach</p>
+          <div className="text-2xl sm:text-4xl md:text-5xl font-light text-red-400">91%</div>
+          <p className="text-white/40 mt-1 sm:mt-2 text-[10px] sm:text-xs">of cold emails<br />get no response</p>
         </div>
       </div>
       <p className="text-center text-base sm:text-lg text-white/60 mb-6">
-        34x more effective, but impossible to find at team scale
+        5x more effective, but impossible to find at team scale
       </p>
       <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6">
         <div className="text-center">
@@ -436,7 +436,7 @@ function S_Market() {
             </div>
             <div className="flex justify-between">
               <span>Sales Navigator</span>
-              <span className="text-white/40">~$1.5B revenue</span>
+              <span className="text-white/40">~$1B revenue</span>
             </div>
             <div className="flex justify-between">
               <span>Apollo.io</span>
@@ -444,11 +444,11 @@ function S_Market() {
             </div>
             <div className="flex justify-between">
               <span>Affinity</span>
-              <span className="text-white/40">$640M valuation</span>
+              <span className="text-white/40">$600M valuation</span>
             </div>
             <div className="flex justify-between">
               <span>Clay</span>
-              <span className="text-white/40">$1.25B valuation</span>
+              <span className="text-white/40">$3.1B valuation</span>
             </div>
           </div>
         </div>
@@ -947,7 +947,7 @@ function S_References() {
       sources: [
         { name: "Belkins 2025 Cold Email Study", url: "https://belkins.io/blog/cold-email-response-rates", stat: "1-5% average response rate" },
         { name: "GrowLeads Warm vs Cold Study", url: "https://growleads.io/blog/warm-outreach-vs-cold-email/", stat: "68% warm intro response (decision-makers)" },
-        { name: "LinkedIn Sales Solutions", url: "https://business.linkedin.com/sales-solutions", stat: "34x more deals via warm introductions" },
+        { name: "Martal Group 2025", url: "https://martal.ca/sales-statistics-lb/", stat: "5x higher conversion via warm introductions" },
       ]
     },
     {
@@ -963,9 +963,9 @@ function S_References() {
       sources: [
         { name: "ZoomInfo Investor Relations", url: "https://ir.zoominfo.com/", stat: "$1.21B revenue (2024)" },
         { name: "Apollo.io Series D Announcement", url: "https://news.crunchbase.com/sales-marketing/apollo-io-funding-sales-tech-unicorn/", stat: "$1.6B valuation" },
-        { name: "LinkedIn Sales Navigator", url: "https://business.linkedin.com/sales-solutions", stat: "~$1.5B estimated revenue" },
-        { name: "Affinity CRM", url: "https://www.affinity.co/", stat: "$640M valuation (Series D)" },
-        { name: "Clay Series B", url: "https://www.clay.com/", stat: "$1.25B valuation" },
+        { name: "LinkedIn Sales Navigator", url: "https://business.linkedin.com/sales-solutions", stat: "~$1B estimated revenue" },
+        { name: "Affinity CRM", url: "https://www.affinity.co/", stat: "$600M valuation (Series C)" },
+        { name: "Clay Series C", url: "https://www.clay.com/", stat: "$3.1B valuation" },
       ]
     },
     {

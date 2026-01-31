@@ -43,12 +43,12 @@ The average 10-person team has **20,000+ relationships** trapped in silos.
 | Cold email response | 2% |
 | Warm intro response | 68% |
 | Time spent searching | 10+ hrs/week |
-| Deals via warm intro | 34x more |
+| Deals via warm intro | 5x more |
 
-**Warm intros close 34x more deals.**
+**Warm intros close 5x more deals.**
 Teams can't find them at scale.
 
-*Sources: Belkins 2025 (2% cold response), GrowLeads (68% warm response), LinkedIn Sales Solutions (34x deal conversion)*
+*Sources: Belkins 2025 (2% cold response), GrowLeads (68% warm response), Martal Group (5x conversion)*
 
 ---
 
@@ -60,12 +60,12 @@ Teams can't find them at scale.
 |--------|-------|---------|
 | Cold email response | 2% | Industry average |
 | Warm intro response | 68% | Decision-makers |
-| Wasted annually | $47B | On cold outreach |
+| Cold emails ignored | 91% | Get no response |
 | B2B deals via referral | 84% | Starting point |
 | Close time | 3x faster | With referrals |
 | CAC reduction | 40% | Via warm paths |
 
-**34x more effective, but impossible to find at team scale**
+**5x more effective, but impossible to find at team scale**
 
 *Sources: Belkins 2025, GrowLeads, ReferReach, LinkedIn Sales Solutions*
 
@@ -142,10 +142,10 @@ Entry: Sales teams at $499/mo (5 seats) → 2.5M teams × $6K/year = $15B
 | Company | Metric |
 |---------|--------|
 | ZoomInfo | $1.21B revenue |
-| Sales Navigator | ~$1.5B revenue |
+| Sales Navigator | ~$1B revenue |
 | Apollo.io | $1.6B valuation |
-| Affinity | $640M valuation |
-| Clay | $1.25B valuation |
+| Affinity | $600M valuation |
+| Clay | $3.1B valuation |
 
 They sell contact data for **strangers**. We unlock relationships teams **already have**.
 
@@ -382,7 +382,7 @@ useknow.io
 ### Cold Email & Response Rates
 - [Belkins 2025 Cold Email Study](https://belkins.io/blog/cold-email-response-rates) — 1-5% average response rate
 - [GrowLeads Warm vs Cold Study](https://growleads.io/blog/warm-outreach-vs-cold-email/) — 68% warm intro response (decision-makers)
-- [LinkedIn Sales Solutions](https://business.linkedin.com/sales-solutions) — 34x more deals via warm introductions
+- [Martal Group 2025](https://martal.ca/sales-statistics-lb/) — 5x higher conversion via warm introductions
 
 ### Referral & B2B Statistics
 - [ReferReach Referral Statistics](https://referreach.com/38-statistics-that-show-the-importance-of-referrals/) — 84% of B2B deals start with referral
@@ -392,9 +392,9 @@ useknow.io
 ### Market Size & Competitors
 - [ZoomInfo Investor Relations](https://ir.zoominfo.com/) — $1.21B revenue (2024)
 - [Apollo.io Series D Announcement](https://news.crunchbase.com/sales-marketing/apollo-io-funding-sales-tech-unicorn/) — $1.6B valuation
-- [LinkedIn Sales Navigator](https://business.linkedin.com/sales-solutions) — ~$1.5B estimated revenue
-- [Affinity CRM](https://www.affinity.co/) — $640M valuation (Series D)
-- [Clay Series B](https://www.clay.com/) — $1.25B valuation
+- [LinkedIn Sales Navigator](https://business.linkedin.com/sales-solutions) — ~$1B estimated revenue
+- [Affinity CRM](https://www.affinity.co/) — $600M valuation (Series C)
+- [Clay Series C](https://www.clay.com/) — $3.1B valuation
 
 ### Workforce & Productivity
 - [Zippia Sales Demographics](https://www.zippia.com/sales-representative-jobs/demographics/) — 13M+ sales professionals in US
