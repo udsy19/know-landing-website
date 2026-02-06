@@ -384,7 +384,7 @@ export default function Pricing() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-8">
-        <div className="container mx-auto px-6 max-w-6xl">
+        <div className="container mx-auto px-6 max-w-5xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>© {new Date().getFullYear()} Know Technologies, Inc.</p>
             <div className="flex gap-6">

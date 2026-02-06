@@ -29,7 +29,7 @@ export default function Privacy() {
       </header>
 
       {/* Content */}
-      <main className="container mx-auto px-6 py-12 max-w-4xl">
+      <main className="container mx-auto px-6 pt-20 pb-12 max-w-4xl">
         <h1 className="text-3xl md:text-4xl font-light mb-2">Privacy Policy</h1>
         <p className="text-muted-foreground mb-12">Last updated: January 14, 2026</p>
 
@@ -162,12 +162,13 @@ export default function Privacy() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-8 mt-12">
-        <div className="container mx-auto px-6 max-w-4xl">
+        <div className="container mx-auto px-6 max-w-5xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>© {new Date().getFullYear()} Know Technologies, Inc.</p>
             <div className="flex gap-6">
               <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-              <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+              <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
             </div>
           </div>
         </div>

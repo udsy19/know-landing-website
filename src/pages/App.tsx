@@ -122,12 +122,12 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/40 py-6">
-        <div className="container mx-auto px-6 max-w-4xl">
+      <footer className="border-t border-border/40 py-8">
+        <div className="container mx-auto px-6 max-w-5xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>© {new Date().getFullYear()} Know Technologies, Inc.</p>
             <div className="flex gap-6">
-              <Link to="/security" className="hover:text-foreground transition-colors">Security</Link>
+              <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
               <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
               <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
             </div>
