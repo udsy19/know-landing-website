@@ -63,13 +63,13 @@ function LandingPage() {
         className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/40"
       >
         <div className="container mx-auto px-6 py-4 max-w-5xl flex items-center justify-between">
-          <motion.span
-            className="text-lg font-mono font-medium"
-            whileHover={{ scale: 1.05 }}
-          >
+          <Link to="/" className="text-lg font-mono font-medium hover:opacity-70 transition-opacity">
             [know]
-          </motion.span>
+          </Link>
           <nav className="flex items-center gap-6">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </Link>
             <Link to="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Security
             </Link>
@@ -1100,43 +1100,52 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Featured In */}
-      <section className="py-12 px-6">
-        <div className="container mx-auto max-w-3xl">
-          <p className="text-xs font-mono text-muted-foreground mb-6 text-center uppercase tracking-[0.2em]">Featured in</p>
-          <div className="flex justify-center">
-            <a
-              href="https://companylaunchtracker.substack.com/p/company-launch-tracker-44"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-6 py-4 border border-border/50 rounded-2xl hover:border-border hover:bg-muted/30 transition-all"
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium group-hover:text-foreground transition-colors">Company Launch Tracker #44</p>
-                <p className="text-xs text-muted-foreground">by Drake Dukes / Gravity</p>
-              </div>
-              <svg className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="border-t border-border/40 py-12 px-6">
+      <footer className="border-t border-border/40 pt-12 pb-8 px-6">
         <div className="container mx-auto max-w-5xl">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+            <div>
               <span className="font-mono text-sm">[know]</span>
-              <span className="text-sm text-muted-foreground">© {new Date().getFullYear()} Know Technologies, Inc.</span>
+              <p className="text-sm text-muted-foreground mt-2 max-w-xs">Your network, intelligently mapped. Find the right connection in seconds.</p>
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/security" className="hover:text-foreground transition-colors">Security</Link>
-              <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
-              <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
-              <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+            <div className="flex flex-col sm:flex-row gap-8">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider mb-3">Product</p>
+                <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                  <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+                  <Link to="/security" className="hover:text-foreground transition-colors">Security</Link>
+                  <a href="https://app.useknow.io" className="hover:text-foreground transition-colors">Open App</a>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider mb-3">Company</p>
+                <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                  <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+                  <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+                  <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider mb-3">Press</p>
+                <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                  <a
+                    href="https://companylaunchtracker.substack.com/p/company-launch-tracker-44"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-foreground transition-colors inline-flex items-center gap-1"
+                  >
+                    Company Launch Tracker
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="border-t border-border/40 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+            <p>© {new Date().getFullYear()} Know Technologies, Inc.</p>
+            <p>Built in West Lafayette, IN</p>
           </div>
         </div>
       </footer>

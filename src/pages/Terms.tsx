@@ -4,8 +4,8 @@ export default function Terms() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-border/40">
-        <div className="container mx-auto px-6 py-5 max-w-5xl flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/40">
+        <div className="container mx-auto px-6 py-4 max-w-5xl flex items-center justify-between">
           <Link to="/" className="text-lg font-mono font-medium hover:opacity-70 transition-opacity">
             [know]
           </Link>
@@ -17,10 +17,12 @@ export default function Terms() {
               Security
             </Link>
             <a
-              href="https://app.useknow.io"
-              className="text-sm px-4 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
+              href="https://cal.com/useknow.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm px-4 py-2 bg-foreground text-background rounded-full font-medium hover:opacity-90 transition-opacity"
             >
-              Open App
+              Book Demo
             </a>
           </nav>
         </div>
