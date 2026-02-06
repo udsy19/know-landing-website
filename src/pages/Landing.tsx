@@ -1,15 +1,44 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Component, type ReactNode } from "react";
 import { Link } from "react-router";
+import { PLATFORMS } from "../data/platforms";
 
-export default function Landing() {
+class LandingErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+          <div className="text-center">
+            <span className="text-2xl font-mono font-medium">[know]</span>
+            <p className="mt-4 text-muted-foreground">
+              Something went wrong. Please refresh.
+            </p>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function LandingPage() {
   const [waitlistCount, setWaitlistCount] = useState(2847);
   const [flowStep, setFlowStep] = useState(0);
 
   // Fetch waitlist count on mount
   useEffect(() => {
     fetch("/api/waitlist-count")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Non-200 response");
+        return res.json();
+      })
       .then(data => {
         if (data.count) setWaitlistCount(data.count);
       })
@@ -690,46 +719,72 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Integrations */}
-      <section className="py-20 px-6 bg-muted/30">
-        <div className="container mx-auto max-w-4xl">
+      {/* Integrations — Infinite Marquee */}
+      <section className="py-20 px-6 bg-muted/30 overflow-hidden">
+        <div className="container mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center"
           >
-            <p className="text-sm font-mono text-muted-foreground mb-8">Connects to the tools you already use</p>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-              {[
-                { name: "Gmail", icon: "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" },
-                { name: "Outlook", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" },
-                { name: "LinkedIn", icon: "M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" },
-                { name: "Calendar", icon: "M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" },
-              ].map((integration, i) => (
-                <motion.div
-                  key={integration.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -5, scale: 1.1 }}
-                  className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            <p className="text-sm font-mono text-muted-foreground mb-4 text-center">Integrations</p>
+            <h2 className="text-2xl md:text-3xl font-light text-center mb-12">Connects to the tools you already use</h2>
+
+            <div className="space-y-4">
+              {/* Row 1 — scrolls left */}
+              <div
+                className="group relative overflow-hidden"
+                style={{
+                  maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                  WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                }}
+              >
+                <div
+                  className="flex gap-4 w-max group-hover:[animation-play-state:paused]"
+                  style={{ animation: "marquee-left 40s linear infinite" }}
                 >
-                  <motion.div
-                    className="w-14 h-14 rounded-2xl bg-background border border-border flex items-center justify-center hover:border-foreground/30 transition-colors"
-                    whileHover={{ rotate: [0, -5, 5, 0] }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                      <path d={integration.icon} />
-                    </svg>
-                  </motion.div>
-                  <span className="text-xs">{integration.name}</span>
-                </motion.div>
-              ))}
+                  {[...PLATFORMS.slice(0, 12), ...PLATFORMS.slice(0, 12)].map((p, i) => (
+                    <div
+                      key={`r1-${i}`}
+                      className="flex items-center gap-3 px-5 py-3 bg-background border border-border rounded-2xl shrink-0"
+                    >
+                      <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill={p.color}>
+                        <path d={p.svgPath} />
+                      </svg>
+                      <span className="text-sm font-medium whitespace-nowrap">{p.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 2 — scrolls right */}
+              <div
+                className="group relative overflow-hidden"
+                style={{
+                  maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                  WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                }}
+              >
+                <div
+                  className="flex gap-4 w-max group-hover:[animation-play-state:paused]"
+                  style={{ animation: "marquee-right 45s linear infinite" }}
+                >
+                  {[...PLATFORMS.slice(12), ...PLATFORMS.slice(12)].map((p, i) => (
+                    <div
+                      key={`r2-${i}`}
+                      className="flex items-center gap-3 px-5 py-3 bg-background border border-border rounded-2xl shrink-0"
+                    >
+                      <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill={p.color}>
+                        <path d={p.svgPath} />
+                      </svg>
+                      <span className="text-sm font-medium whitespace-nowrap">{p.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-6">Connect in 2 minutes. Read-only access. Revoke anytime.</p>
+
+            <p className="text-xs text-muted-foreground mt-8 text-center">Connect in 2 minutes. Read-only access. Revoke anytime.</p>
           </motion.div>
         </div>
       </section>
@@ -1045,6 +1100,29 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Featured In */}
+      <section className="py-12 px-6">
+        <div className="container mx-auto max-w-3xl">
+          <p className="text-xs font-mono text-muted-foreground mb-6 text-center uppercase tracking-[0.2em]">Featured in</p>
+          <div className="flex justify-center">
+            <a
+              href="https://companylaunchtracker.substack.com/p/company-launch-tracker-44"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-6 py-4 border border-border/50 rounded-2xl hover:border-border hover:bg-muted/30 transition-all"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium group-hover:text-foreground transition-colors">Company Launch Tracker #44</p>
+                <p className="text-xs text-muted-foreground">by Drake Dukes / Gravity</p>
+              </div>
+              <svg className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border/40 py-12 px-6">
         <div className="container mx-auto max-w-5xl">
@@ -1063,5 +1141,13 @@ export default function Landing() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function Landing() {
+  return (
+    <LandingErrorBoundary>
+      <LandingPage />
+    </LandingErrorBoundary>
   );
 }
