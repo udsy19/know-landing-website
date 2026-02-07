@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect, Component, type ReactNode } from "react";
 import { Link } from "react-router";
 import { PLATFORMS } from "../data/platforms";
+import SiteHeader from "../components/SiteHeader";
 
 class LandingErrorBoundary extends Component<
   { children: ReactNode },
@@ -34,7 +35,8 @@ function LandingPage() {
 
   // Fetch waitlist count on mount
   useEffect(() => {
-    fetch("/api/waitlist-count")
+    const controller = new AbortController();
+    fetch("/api/waitlist-count", { signal: controller.signal })
       .then(res => {
         if (!res.ok) throw new Error("Non-200 response");
         return res.json();
@@ -42,7 +44,12 @@ function LandingPage() {
       .then(data => {
         if (data.count) setWaitlistCount(data.count);
       })
-      .catch(() => {});
+      .catch(err => {
+        if (err.name !== "AbortError") {
+          console.warn("Failed to fetch waitlist count");
+        }
+      });
+    return () => controller.abort();
   }, []);
 
   // Flow diagram animation cycle
@@ -55,37 +62,7 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/40"
-      >
-        <div className="container mx-auto px-6 py-4 max-w-5xl flex items-center justify-between">
-          <Link to="/" className="text-lg font-mono font-medium hover:opacity-70 transition-opacity">
-            [know]
-          </Link>
-          <nav className="flex items-center gap-6">
-            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </Link>
-            <Link to="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Security
-            </Link>
-            <motion.a
-              href="https://cal.com/useknow.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm px-4 py-2 bg-foreground text-background rounded-full font-medium hover:opacity-90 transition-opacity"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Book Demo
-            </motion.a>
-          </nav>
-        </div>
-      </motion.header>
+      <SiteHeader />
 
       {/* Hero */}
       <section className="min-h-screen flex flex-col justify-center px-6 pt-20 relative overflow-hidden">

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth
+Disallow: /pitch/print
+Disallow: /stories
+
+Sitemap: https://useknow.io/sitemap.xml

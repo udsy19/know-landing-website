@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { isRateLimited, getClientIp } from "./lib/sanitize";
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-// Allowed origins for CORS
 const ALLOWED_ORIGINS = [
   "https://useknow.io",
   "https://www.useknow.io",
@@ -13,10 +13,10 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
 ];
 
-// Cache the count for 60 seconds to avoid hitting Notion API too frequently
+// Cache the count for 60 seconds
 let cachedCount: number | null = null;
 let cacheTimestamp: number = 0;
-const CACHE_DURATION = 60 * 1000; // 60 seconds
+const CACHE_DURATION = 60_000;
 
 interface NotionQueryResponse {
   results: unknown[];
@@ -25,7 +25,7 @@ interface NotionQueryResponse {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS headers with origin validation
+  // CORS
   const origin = req.headers.origin;
   if (origin && ALLOWED_ORIGINS.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -34,19 +34,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Max-Age", "86400");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
+  // Rate limiting: 30 reads per minute per IP
+  const ip = getClientIp(req.headers as Record<string, string | string[] | undefined>);
+  if (isRateLimited(ip, 30, 60_000)) {
+    return res.status(429).json({ error: "Too many requests" });
   }
 
   try {
-    // Check if Notion is configured
     if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
-      // Return a default count if not configured
-      return res.status(200).json({ count: 2847 });
+      return res.status(200).json({ count: 0 });
     }
 
     // Check cache
@@ -55,19 +54,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ count: cachedCount, cached: true });
     }
 
-    // Query Notion database to get count using direct API call
+    // Query Notion for actual count
     let count = 0;
     let hasMore = true;
     let startCursor: string | undefined = undefined;
 
     while (hasMore) {
-      const body: { page_size: number; start_cursor?: string } = {
-        page_size: 100,
-      };
-
-      if (startCursor) {
-        body.start_cursor = startCursor;
-      }
+      const body: { page_size: number; start_cursor?: string } = { page_size: 100 };
+      if (startCursor) body.start_cursor = startCursor;
 
       const response = await fetch(
         `https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`,
@@ -82,28 +76,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`Notion API error: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`Notion API error: ${response.status}`);
 
       const data: NotionQueryResponse = await response.json();
-
       count += data.results.length;
       hasMore = data.has_more;
       startCursor = data.next_cursor || undefined;
     }
 
-    // Add a base number to make it look more impressive
-    const displayCount = count + 2800;
-
-    // Update cache
-    cachedCount = displayCount;
+    // Update cache with real count
+    cachedCount = count;
     cacheTimestamp = now;
 
-    return res.status(200).json({ count: displayCount });
+    return res.status(200).json({ count });
   } catch (error) {
     console.error("Waitlist count error:", error);
-    // Return cached count or default on error
-    return res.status(200).json({ count: cachedCount || 2847 });
+    return res.status(200).json({ count: cachedCount || 0 });
   }
 }

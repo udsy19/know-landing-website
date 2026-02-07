@@ -112,10 +112,13 @@ function RouteSyncer() {
     if (window.parent !== window) {
       try {
         // Send to parent - the parent's origin will be validated by the browser
-        window.parent.postMessage(
-          { type: "iframe-route-change", path: location.pathname },
-          "*", // Browser restricts this based on iframe sandbox
-        );
+        // Send to each allowed origin
+        for (const allowedOrigin of ALLOWED_ORIGINS) {
+          window.parent.postMessage(
+            { type: "iframe-route-change", path: location.pathname },
+            allowedOrigin,
+          );
+        }
       } catch {
         // Silently fail if cross-origin restrictions prevent message
       }
@@ -142,13 +145,28 @@ function RouteSyncer() {
 }
 
 
+// Skip-to-content link for keyboard users
+function SkipToContent() {
+  return (
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-lg focus:text-sm"
+    >
+      Skip to content
+    </a>
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <InstrumentationProvider>
       <ConvexWrapper>
         <BrowserRouter>
+          <SkipToContent />
           <RouteSyncer />
-          <AppWithAnimation />
+          <div id="main-content">
+            <AppWithAnimation />
+          </div>
         </BrowserRouter>
         <Toaster />
       </ConvexWrapper>
