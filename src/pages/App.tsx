@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO from "../components/SEO";
 
 export default function App() {
   // Auto-redirect after 3 seconds (optional - can be removed if you want manual click only)
@@ -14,6 +15,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <SEO title="Open App" path="/app" noindex />
       <SiteHeader />
 
       {/* Main Content */}

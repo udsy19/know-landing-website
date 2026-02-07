@@ -1,9 +1,16 @@
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO, { BreadcrumbSchema } from "../components/SEO";
 
 export default function Terms() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Terms of Service"
+        description="Terms of Service for Know — the network intelligence platform. Read our terms governing access and use of our services."
+        path="/terms"
+      />
+      <BreadcrumbSchema items={[{ name: "Terms of Service", path: "/terms" }]} />
       <SiteHeader />
 
       {/* Content */}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO, { BreadcrumbSchema, FAQSchema } from "../components/SEO";
 
 const CheckIcon = () => (
   <svg className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,6 +113,13 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Pricing"
+        description="Simple, transparent pricing for Know. Start with a 14-day free trial, then choose Pro at $49/mo or Business at $99/mo. No hidden fees."
+        path="/pricing"
+      />
+      <BreadcrumbSchema items={[{ name: "Pricing", path: "/pricing" }]} />
+      <FAQSchema faqs={faqs} />
       <SiteHeader />
 
       {/* Hero */}

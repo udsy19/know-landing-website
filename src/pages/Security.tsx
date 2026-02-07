@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { motion } from "framer-motion";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO, { BreadcrumbSchema } from "../components/SEO";
 
 const ShieldIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,6 +106,12 @@ export default function Security() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Security"
+        description="Know uses 256-bit encryption, SOC 2 compliant infrastructure, and OAuth 2.0. We never read your email content or sell your data."
+        path="/security"
+      />
+      <BreadcrumbSchema items={[{ name: "Security", path: "/security" }]} />
       <SiteHeader />
 
       {/* Hero */}

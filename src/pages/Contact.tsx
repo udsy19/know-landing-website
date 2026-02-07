@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO, { BreadcrumbSchema } from "../components/SEO";
 
 export default function Contact() {
   const [step, setStep] = useState(0);
@@ -92,6 +93,12 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <SEO
+        title="Contact"
+        description="Get in touch with the Know team. Send us product feedback, bug reports, feature requests, or partnership inquiries."
+        path="/contact"
+      />
+      <BreadcrumbSchema items={[{ name: "Contact", path: "/contact" }]} />
       <SiteHeader />
 
       {/* Main Content */}

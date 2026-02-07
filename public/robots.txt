@@ -4,5 +4,6 @@ Disallow: /api/
 Disallow: /auth
 Disallow: /pitch/print
 Disallow: /stories
+Disallow: /app
 
 Sitemap: https://useknow.io/sitemap.xml

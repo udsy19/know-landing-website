@@ -3,6 +3,7 @@ import { useState, useEffect, Component, type ReactNode } from "react";
 import { Link } from "react-router";
 import { PLATFORMS } from "../data/platforms";
 import SiteHeader from "../components/SiteHeader";
+import SEO, { OrganizationSchema, ProductSchema, FAQSchema } from "../components/SEO";
 
 class LandingErrorBoundary extends Component<
   { children: ReactNode },
@@ -60,8 +61,20 @@ function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const landingFaqs = [
+    { q: "How does Know access my data?", a: "Know connects to your work email and calendar via OAuth (the same secure method used by other apps). We only read metadata like names, email addresses, and meeting attendees—we never read the content of your emails or calendar events." },
+    { q: "Can other team members see my emails?", a: "No. Team members can only see who you're connected to and the strength of those connections. They cannot see email content, calendar details, or any private information." },
+    { q: "What happens if I disconnect my account?", a: "You can disconnect at any time from your account settings. When you disconnect, we delete all your data within 24 hours. Your connections will no longer appear in your team's shared network." },
+    { q: "How is connection strength calculated?", a: "We analyze email frequency, recency, response patterns, and meeting history to calculate a relationship strength score. More recent and frequent interactions result in higher scores." },
+    { q: "Can I try Know individually before rolling it out to my team?", a: "Yes! Our Solo plan at $49/month lets founders and operators test Know before team rollout. You'll get full access to search your own network and see how Know works." },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO />
+      <OrganizationSchema />
+      <ProductSchema />
+      <FAQSchema faqs={landingFaqs} />
       <SiteHeader />
 
       {/* Hero */}

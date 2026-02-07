@@ -4,6 +4,7 @@ import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { HelmetProvider } from "react-helmet-async";
 import { StrictMode, useEffect, lazy, Suspense, useState, useCallback, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
@@ -159,18 +160,20 @@ function SkipToContent() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <InstrumentationProvider>
-      <ConvexWrapper>
-        <BrowserRouter>
-          <SkipToContent />
-          <RouteSyncer />
-          <div id="main-content">
-            <AppWithAnimation />
-          </div>
-        </BrowserRouter>
-        <Toaster />
-      </ConvexWrapper>
-    </InstrumentationProvider>
+    <HelmetProvider>
+      <InstrumentationProvider>
+        <ConvexWrapper>
+          <BrowserRouter>
+            <SkipToContent />
+            <RouteSyncer />
+            <div id="main-content">
+              <AppWithAnimation />
+            </div>
+          </BrowserRouter>
+          <Toaster />
+        </ConvexWrapper>
+      </InstrumentationProvider>
+    </HelmetProvider>
     <Analytics />
     <SpeedInsights />
   </StrictMode>,

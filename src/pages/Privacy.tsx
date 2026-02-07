@@ -1,9 +1,16 @@
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO, { BreadcrumbSchema } from "../components/SEO";
 
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Privacy Policy"
+        description="Learn how Know Technologies collects, uses, and protects your personal data. We never read email content or sell your information."
+        path="/privacy"
+      />
+      <BreadcrumbSchema items={[{ name: "Privacy Policy", path: "/privacy" }]} />
       <SiteHeader />
 
       {/* Content */}

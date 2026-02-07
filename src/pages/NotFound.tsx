@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { motion } from "framer-motion";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import SEO from "../components/SEO";
 
 export default function NotFound() {
   return (
@@ -11,6 +12,7 @@ export default function NotFound() {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex flex-col bg-background text-foreground"
     >
+      <SEO title="Page Not Found" noindex />
       <SiteHeader />
 
       <main className="flex-1 flex flex-col items-center justify-center px-6">

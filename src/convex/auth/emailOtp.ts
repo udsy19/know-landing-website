@@ -2,10 +2,9 @@ import { Email } from "@convex-dev/auth/providers/Email";
 import axios from "axios";
 import { RandomReader, generateRandomString } from "@oslojs/crypto/random";
 
-export const emailOtp = Email({
+const emailConfig = {
   id: "email-otp",
   maxAge: 60 * 15, // 15 minutes
-  // This function can be asynchronous
   async generateVerificationToken() {
     const random: RandomReader = {
       read(bytes: Uint8Array) {
@@ -15,7 +14,7 @@ export const emailOtp = Email({
     const alphabet = "0123456789";
     return generateRandomString(random, alphabet, 6);
   },
-  async sendVerificationRequest({ identifier: email, token }) {
+  async sendVerificationRequest({ identifier: email, token }: { identifier: string; token: string }) {
     try {
       await axios.post(
         "https://email.vly.ai/send_otp",
@@ -34,4 +33,7 @@ export const emailOtp = Email({
       throw new Error(JSON.stringify(error));
     }
   },
-});
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const emailOtp = Email(emailConfig as any);
