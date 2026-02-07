@@ -3,12 +3,26 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>[know] — Your network, intelligently mapped</title>
   <meta name="description" content="Find the warm path to anyone. Know maps your professional network across email, calendar, and LinkedIn to surface the right connection in seconds." />
-  <meta name="theme-color" content="#000000" />
+  <meta name="author" content="Know Technologies, Inc." />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="[know]" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="manifest" href="/manifest.webmanifest" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -17,20 +31,26 @@
   <meta property="og:url" content="https://useknow.io" />
   <meta property="og:site_name" content="Know" />
   <meta property="og:image" content="https://useknow.io/logo_bg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Know — Your network, intelligently mapped" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="[know] — Your network, intelligently mapped" />
   <meta name="twitter:description" content="Find the warm path to anyone. Know maps your professional network to surface the right connection in seconds." />
   <meta name="twitter:image" content="https://useknow.io/logo_bg.png" />
+  <meta name="twitter:image:alt" content="Know — Your network, intelligently mapped" />
 
   <!-- Canonical -->
   <link rel="canonical" href="https://useknow.io" />
 
-  <!-- DNS prefetch for external domains -->
-  <link rel="dns-prefetch" href="https://cal.com" />
+  <!-- Preconnect for critical third-party domains -->
+  <link rel="preconnect" href="https://cal.com" crossorigin />
+  <link rel="preconnect" href="https://va.vercel-scripts.com" crossorigin />
   <link rel="dns-prefetch" href="https://app.useknow.io" />
-  <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+  <link rel="dns-prefetch" href="https://api.notion.com" />
 </head>
 
 

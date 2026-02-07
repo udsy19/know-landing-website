@@ -1,18 +1,10 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Client } from "@notionhq/client";
 import { sanitizeString, isValidEmail, isRateLimited, getClientIp } from "./lib/sanitize";
+import { setCorsHeaders } from "./lib/cors";
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID!;
-
-const ALLOWED_ORIGINS = [
-  "https://useknow.io",
-  "https://www.useknow.io",
-  "https://know-silk.vercel.app",
-  "http://localhost:5173",
-  "http://localhost:5175",
-  "http://localhost:3000",
-];
 
 interface WaitlistEntry {
   email: string;
@@ -30,10 +22,12 @@ function isValidLinkedInUrl(url: string): boolean {
   if (!url) return true;
   try {
     let normalized = url.trim();
-    if (!normalized.startsWith("http://") && !normalized.startsWith("https://")) {
+    if (!normalized.startsWith("https://") && !normalized.startsWith("http://")) {
       normalized = "https://" + normalized;
     }
     const parsed = new URL(normalized);
+    // Only allow HTTPS LinkedIn URLs
+    if (parsed.protocol !== "https:") return false;
     return parsed.hostname === "linkedin.com" || parsed.hostname === "www.linkedin.com";
   } catch {
     return false;
@@ -42,13 +36,7 @@ function isValidLinkedInUrl(url: string): boolean {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Max-Age", "86400");
+  setCorsHeaders(req.headers.origin, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });

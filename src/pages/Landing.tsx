@@ -1059,6 +1059,7 @@ function LandingPage() {
               <span className="text-muted-foreground">or</span>
               <motion.a
                 href="https://app.useknow.io"
+                rel="noopener noreferrer"
                 className="text-lg text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
                 whileHover={{ x: 5 }}
               >
@@ -1104,7 +1105,7 @@ function LandingPage() {
                 <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                   <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
                   <Link to="/security" className="hover:text-foreground transition-colors">Security</Link>
-                  <a href="https://app.useknow.io" className="hover:text-foreground transition-colors">Open App</a>
+                  <a href="https://app.useknow.io" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Open App</a>
                 </div>
               </div>
               <div>

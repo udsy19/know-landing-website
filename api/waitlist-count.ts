@@ -1,17 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { isRateLimited, getClientIp } from "./lib/sanitize";
+import { setCorsHeaders } from "./lib/cors";
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
-
-const ALLOWED_ORIGINS = [
-  "https://useknow.io",
-  "https://www.useknow.io",
-  "https://know-silk.vercel.app",
-  "http://localhost:5173",
-  "http://localhost:5175",
-  "http://localhost:3000",
-];
 
 // Cache the count for 60 seconds
 let cachedCount: number | null = null;
@@ -26,13 +18,7 @@ interface NotionQueryResponse {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Max-Age", "86400");
+  setCorsHeaders(req.headers.origin, res, "GET, OPTIONS");
 
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });

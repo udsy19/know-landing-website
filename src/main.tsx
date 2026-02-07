@@ -133,9 +133,15 @@ function RouteSyncer() {
         return;
       }
 
-      if (event.data?.type === "navigate") {
+      // Validate message structure before acting
+      if (
+        event.data &&
+        typeof event.data === "object" &&
+        event.data.type === "navigate" &&
+        typeof event.data.direction === "string"
+      ) {
         if (event.data.direction === "back") window.history.back();
-        if (event.data.direction === "forward") window.history.forward();
+        else if (event.data.direction === "forward") window.history.forward();
       }
     }
     window.addEventListener("message", handleMessage);

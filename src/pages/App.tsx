@@ -58,6 +58,7 @@ export default function App() {
           {/* CTA Button */}
           <motion.a
             href="https://app.useknow.io"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity"
@@ -72,6 +73,7 @@ export default function App() {
             Not redirecting?{" "}
             <a
               href="https://app.useknow.io"
+              rel="noopener noreferrer"
               className="text-foreground underline hover:no-underline"
             >
               Click here

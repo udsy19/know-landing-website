@@ -8,14 +8,23 @@ export function sanitizeString(input: unknown, maxLength: number = 500): string 
   return input
     .trim()
     .slice(0, maxLength)
-    // Strip HTML tags and common XSS vectors
-    .replace(/<[^>]*>/g, "")
-    .replace(/javascript:/gi, "")
-    .replace(/on\w+\s*=/gi, "");
+    // Decode HTML entities that could bypass tag stripping
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
+    // Strip HTML/SVG tags
+    .replace(/<\/?[a-z][^>]*>/gi, "")
+    // Strip dangerous URL schemes
+    .replace(/javascript\s*:/gi, "")
+    .replace(/vbscript\s*:/gi, "")
+    .replace(/data\s*:[^,]*,/gi, "")
+    // Strip event handlers (on* attributes)
+    .replace(/\bon\w+\s*=\s*["'`]?[^"'`>]*/gi, "");
 }
 
 /**
- * RFC 5321–compatible email validation.
+ * RFC 5321-compatible email validation.
  * Checks structure, length limits, and TLD presence.
  */
 export function isValidEmail(email: string): boolean {
@@ -32,8 +41,31 @@ export function isValidEmail(email: string): boolean {
   return true;
 }
 
-/** In-memory rate limiter keyed by IP. */
+/** Maximum number of tracked IPs to prevent unbounded memory growth. */
+const MAX_RATE_LIMIT_ENTRIES = 10_000;
+
+/** In-memory rate limiter keyed by IP with automatic cleanup. */
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+/** Periodically clean up expired entries to prevent memory leaks. */
+function cleanupExpiredEntries() {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetAt) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
+
+// Run cleanup every 5 minutes in long-running environments
+let cleanupInterval: ReturnType<typeof setInterval> | null = null;
+if (typeof setInterval !== "undefined" && !cleanupInterval) {
+  cleanupInterval = setInterval(cleanupExpiredEntries, 5 * 60_000);
+  // Don't prevent process from exiting
+  if (cleanupInterval && typeof cleanupInterval === "object" && "unref" in cleanupInterval) {
+    cleanupInterval.unref();
+  }
+}
 
 /**
  * Check rate limit for a given key (usually IP address).
@@ -48,6 +80,15 @@ export function isRateLimited(
   const entry = rateLimitMap.get(key);
 
   if (!entry || now > entry.resetAt) {
+    // Evict oldest entries if map is too large
+    if (rateLimitMap.size >= MAX_RATE_LIMIT_ENTRIES) {
+      cleanupExpiredEntries();
+      // If still too large after cleanup, remove oldest entries
+      if (rateLimitMap.size >= MAX_RATE_LIMIT_ENTRIES) {
+        const keysToDelete = Array.from(rateLimitMap.keys()).slice(0, 1000);
+        for (const k of keysToDelete) rateLimitMap.delete(k);
+      }
+    }
     rateLimitMap.set(key, { count: 1, resetAt: now + windowMs });
     return false;
   }
