@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { isRateLimited, getClientIp } from "./lib/sanitize";
-import { setCorsHeaders } from "./lib/cors";
+import { isRateLimited, getClientIp } from "./lib/sanitize.js";
+import { setCorsHeaders } from "./lib/cors.js";
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;

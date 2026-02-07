@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Client } from "@notionhq/client";
-import { sanitizeString, isValidEmail, isRateLimited, getClientIp } from "./lib/sanitize";
-import { setCorsHeaders } from "./lib/cors";
+import { sanitizeString, isValidEmail, isRateLimited, getClientIp } from "./lib/sanitize.js";
+import { setCorsHeaders } from "./lib/cors.js";
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const NOTION_FEEDBACK_DATABASE_ID = process.env.NOTION_FEEDBACK_DATABASE_ID!;
