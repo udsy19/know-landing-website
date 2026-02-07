@@ -1,4 +1,7 @@
-import { Helmet } from "react-helmet-async";
+/**
+ * SEO component using React 19's native document metadata support.
+ * React 19 automatically hoists <title>, <meta>, and <link> tags to <head>.
+ */
 
 interface SEOProps {
   title?: string;
@@ -28,7 +31,7 @@ export default function SEO({
   const canonicalUrl = `${SITE_URL}${path}`;
 
   return (
-    <Helmet>
+    <>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
@@ -50,7 +53,7 @@ export default function SEO({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
-    </Helmet>
+    </>
   );
 }
 
@@ -73,9 +76,10 @@ export function OrganizationSchema() {
   };
 
   return (
-    <Helmet>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
-    </Helmet>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
   );
 }
 
@@ -132,9 +136,10 @@ export function ProductSchema() {
   };
 
   return (
-    <Helmet>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
-    </Helmet>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
   );
 }
 
@@ -154,9 +159,10 @@ export function FAQSchema({ faqs }: { faqs: { q: string; a: string }[] }) {
   };
 
   return (
-    <Helmet>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
-    </Helmet>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
   );
 }
 
@@ -182,8 +188,9 @@ export function BreadcrumbSchema({ items }: { items: { name: string; path: strin
   };
 
   return (
-    <Helmet>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
-    </Helmet>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
   );
 }
